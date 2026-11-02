@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1d3a30">
+<meta name="description" content="Pregações com marcações, Bíblia e modo púlpito. Funciona offline.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Púlpito">
+<title>Púlpito</title>
+<style>
+/* Mesmo desenho do Hinário: biblioteca à esquerda, sermão para leitura à direita, mapa do sermão fixo; modo púlpito em tela cheia */
+:root{
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#f4f5f0; --surface:#ffffff; --surface-2:#eef1ea; --ink:#18201c; --muted:#5b6861; --line:#e1e6de; --line-strong:#cfd7cd;
+  --cover:#1d3a30; --cover-2:#26493d; --cover-ink:#eef3ee; --brass:#9a6612; --brass-strong:#b7791a; --brass-soft:#f5ead3; --brass-ink:#1b1306;
+  --danger:#b3362f; --ok:#2f8a55; --warn:#b7791a; --act:#1d3a30; --act-hover:#26493d;
+  --mk-key:#9a6612; --mk-key-bg:#f8eedb; --mk-ask:#2d5f8f; --mk-ask-bg:#e6eff8; --mk-ill:#2f7350; --mk-ill-bg:#e3f1e8;
+  --mk-app:#6d4a8c; --mk-app-bg:#efe8f6; --mk-call:#a5402f; --mk-call-bg:#f8e6e2; --here:#d9a441; --here-bg:#fff6e2;
+  --shadow-sm:0 1px 2px rgba(20,32,26,.06),0 1px 3px rgba(20,32,26,.05);
+  --shadow:0 4px 14px rgba(20,32,26,.08),0 1px 3px rgba(20,32,26,.06);
+  --shadow-lg:0 24px 60px rgba(10,20,15,.28);
+  --r-sm:8px; --r:12px; --r-lg:18px;
+  --f-text:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-mono:ui-monospace,Menlo,Consolas,monospace;
+  --libw:320px; --hh:64px; --fs:21px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1311; --surface:#151c19; --surface-2:#1b2420; --ink:#e7ede9; --muted:#97a59d; --line:#243029; --line-strong:#2f3c35;
+  --cover:#13201b; --cover-2:#1a2b24; --cover-ink:#e7ede9; --brass:#e4b25c; --brass-strong:#ecc070; --brass-soft:#2e2617; --brass-ink:#1b1306;
+  --danger:#ec8178; --ok:#6fcf8f; --warn:#ecc070; --act:#2c6650; --act-hover:#357a60;
+  --mk-key:#e9b862; --mk-key-bg:#2c2416; --mk-ask:#8fbce6; --mk-ask-bg:#17242f; --mk-ill:#7fcf9c; --mk-ill-bg:#14261c;
+  --mk-app:#c9a6e6; --mk-app-bg:#231a2c; --mk-call:#f0988a; --mk-call-bg:#2d1916; --here:#e9b862; --here-bg:#272013;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3); --shadow:0 6px 18px rgba(0,0,0,.35); --shadow-lg:0 24px 60px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0e1311; --surface:#151c19; --surface-2:#1b2420; --ink:#e7ede9; --muted:#97a59d; --line:#243029; --line-strong:#2f3c35;
+  --cover:#13201b; --cover-2:#1a2b24; --cover-ink:#e7ede9; --brass:#e4b25c; --brass-strong:#ecc070; --brass-soft:#2e2617; --brass-ink:#1b1306;
+  --danger:#ec8178; --ok:#6fcf8f; --warn:#ecc070; --act:#2c6650; --act-hover:#357a60;
+  --mk-key:#e9b862; --mk-key-bg:#2c2416; --mk-ask:#8fbce6; --mk-ask-bg:#17242f; --mk-ill:#7fcf9c; --mk-ill-bg:#14261c;
+  --mk-app:#c9a6e6; --mk-app-bg:#231a2c; --mk-call:#f0988a; --mk-call-bg:#2d1916; --here:#e9b862; --here-bg:#272013;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3); --shadow:0 6px 18px rgba(0,0,0,.35); --shadow-lg:0 24px 60px rgba(0,0,0,.6); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--paper)}
+body{margin:0;color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--cover)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,transform .1s}
+button:active:not(:disabled){transform:scale(.97)}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.ic{width:17px;height:17px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Cabeçalho */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;color:var(--cover-ink);background:linear-gradient(180deg,var(--cover-2),var(--cover));
+  box-shadow:0 1px 0 rgba(0,0,0,.15),0 6px 20px rgba(10,20,15,.12);min-height:var(--hh);display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-text);font-size:1.4rem;font-weight:600;white-space:nowrap}
+.brand img{width:34px;height:34px;border-radius:9px;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+.brand span{display:flex;flex-direction:column;line-height:1.05}
+.brand small{font-family:var(--f-ui);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;opacity:.65;font-weight:600;margin-top:3px}
+.search{flex:1 1 220px;min-width:0;position:relative;max-width:560px}
+.search input{width:100%;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:10px 16px 10px 36px;background:rgba(255,255,255,.1);color:var(--cover-ink)}
+.search input::placeholder{color:var(--cover-ink);opacity:.55}
+.search input:focus{background:rgba(255,255,255,.18);outline:none;border-color:rgba(255,255,255,.4)}
+.search .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.6;pointer-events:none}
+.top-actions{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:var(--cover-ink);border-radius:999px;padding:8px 14px;font-size:.85rem;font-weight:500;white-space:nowrap}
+.tbtn:hover{background:rgba(255,255,255,.12)}
+.tbtn.primary{background:var(--brass);border-color:var(--brass);color:var(--brass-ink);font-weight:650}
+.tbtn.primary:hover{background:var(--brass-strong)}
+.tbtn .sm{display:none}
+.nuvem .dot{width:8px;height:8px;border-radius:50%;background:#9aa7a0;flex:0 0 auto}
+.nuvem[data-st="ok"] .dot{background:var(--ok)}
+.nuvem[data-st="sync"] .dot{background:var(--brass);animation:pulsa 1s infinite alternate}
+.nuvem[data-st="offline"] .dot{background:#c9b27a}
+.nuvem[data-st="erro"] .dot{background:#e57b72}
+@keyframes pulsa{from{opacity:.35}to{opacity:1}}
+
+/* Grade */
+.app{display:grid;grid-template-columns:var(--libw) minmax(0,1fr);min-height:calc(100vh - var(--hh))}
+.lib{position:sticky;top:calc(var(--hh) + env(safe-area-inset-top,0px));height:calc(100vh - var(--hh) - env(safe-area-inset-top,0px));overflow:auto;border-right:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column}
+.tabs{display:flex;gap:2px;margin:14px 14px 6px;padding:4px;background:var(--surface-2);border-radius:var(--r)}
+.tab{flex:1;border:0;background:transparent;padding:8px 4px;border-radius:9px;color:var(--muted);font-size:.84rem;font-weight:600}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm)}
+.cnt{display:inline-block;font-variant-numeric:tabular-nums;font-size:.7rem;margin-left:4px;padding:1px 6px;border-radius:999px;background:var(--line);color:var(--muted)}
+.tab[aria-selected="true"] .cnt{background:var(--brass-soft);color:var(--brass)}
+.pasta{padding:6px 14px 4px}
+.pasta select{width:100%;border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 12px;background:var(--surface);font-size:.88rem}
+.list{list-style:none;margin:0;padding:6px 10px 40px;display:grid;gap:2px}
+.list .grp-h{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:12px 10px 4px}
+.item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:transparent;border-radius:var(--r);padding:9px 10px;position:relative}
+.item:hover{background:var(--surface-2)}
+.item:active{transform:none}
+.item.on{background:var(--brass-soft)}
+.item.on::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--brass)}
+.item .n{flex:0 0 40px;height:40px;display:grid;place-items:center;border-radius:11px;background:var(--surface-2);font-family:var(--f-text);font-size:1.1rem;color:var(--brass);font-weight:700;border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.item.on .n{background:var(--brass);color:var(--brass-ink);border-color:var(--brass)}
+.item .t{flex:1;min-width:0}
+.item .t b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .t small{color:var(--muted);font-size:.78rem}
+.item .fav{color:var(--brass)}
+.item .prog{font-size:.7rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.empty{padding:32px 18px;color:var(--muted);text-align:center;font-size:.9rem;line-height:1.6}
+
+/* Leitor */
+.reader{min-width:0;padding-block:28px 40vh;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:24px;max-width:1150px;margin:0 auto}
+.col{min-width:0}
+.back{display:none;border:0;background:transparent;color:var(--muted);padding:0 0 12px;font-size:.9rem;font-weight:500}
+.hh{display:flex;align-items:center;gap:20px;padding:22px 24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm)}
+.hnum{flex:0 0 auto;min-width:76px;padding:10px 12px 12px;text-align:center;border-radius:14px;background:var(--brass-soft);font-family:var(--f-text);font-size:2.6rem;line-height:.95;color:var(--brass);font-weight:700;font-variant-numeric:tabular-nums}
+.hnum small{display:block;font-family:var(--f-ui);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:6px;opacity:.8}
+.htitle{flex:1;min-width:0}
+.htitle h1{font-family:var(--f-text);font-weight:600;font-size:clamp(1.5rem,3.4vw,2.2rem);line-height:1.1;margin:0 0 8px;text-wrap:balance}
+.meta{color:var(--muted);font-size:.82rem;display:flex;gap:6px;flex-wrap:wrap}
+.meta span,.meta button{padding:3px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:.82rem}
+.meta .base{background:var(--brass-soft);color:var(--brass);border-color:transparent;font-weight:650}
+.tools{display:flex;flex-wrap:wrap;gap:8px;padding:16px 0 4px}
+.grp{display:flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:var(--surface);overflow:hidden;box-shadow:var(--shadow-sm)}
+.grp button{border:0;background:transparent;padding:8px 13px;font-size:.85rem;font-weight:500;white-space:nowrap}
+.grp button:hover{background:var(--surface-2)}
+.grp button:active{transform:none}
+.grp .val{padding:0 10px;font-size:.85rem;font-weight:650;font-variant-numeric:tabular-nums;border-inline:1px solid var(--line);align-self:stretch;display:flex;align-items:center;white-space:nowrap}
+.grp button[aria-pressed="true"]{background:var(--brass-soft);color:var(--brass);font-weight:650}
+.grp .go{background:var(--act);color:var(--cover-ink);font-weight:650}
+.grp .go:hover{background:var(--act-hover)}
+.secs{display:none;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.secs button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:.8rem;white-space:nowrap}
+.secs .done{color:var(--muted)}
+.secs .cur{background:var(--here-bg);border-color:var(--here);font-weight:650}
+.sheet{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:8px 28px 28px;box-shadow:var(--shadow-sm)}
+.hist{margin-top:14px}
+.hist ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.hist li{display:flex;gap:10px;align-items:center;font-size:.88rem;padding:6px 0;border-bottom:1px solid var(--line)}
+.hist li:last-child{border-bottom:0}
+.hist li span{flex:1;min-width:0}
+.hist .mini{border:0;background:transparent;color:var(--muted);border-radius:8px;width:30px;height:30px}
+.hist .mini:hover{background:var(--surface-2);color:var(--danger)}
+
+/* Sermão renderizado */
+.sec{padding-top:22px;scroll-margin-top:calc(var(--hh) + 20px)}
+.sec-h{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.sec-h .rn{font-family:var(--f-text);font-weight:700;color:var(--brass);font-size:.8rem;min-width:28px;height:28px;padding:0 6px;border-radius:8px;display:grid;place-items:center;background:var(--brass-soft)}
+.sec-h h2{font-family:var(--f-text);font-size:calc(var(--fs) * 1.2);margin:0;font-weight:600;line-height:1.2;text-wrap:balance;flex:1;min-width:0}
+.sec-h .min{font-size:.75rem;font-weight:650;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.b{position:relative;font-family:var(--f-text);font-size:var(--fs);line-height:1.55;margin:0 0 10px;padding:4px 10px 4px 14px;border-left:3px solid transparent;border-radius:0 10px 10px 0;cursor:pointer;transition:opacity .2s,background-color .2s;overflow-wrap:anywhere}
+.b:hover{background:var(--surface-2)}
+.b.done{opacity:.42}
+.b.here{background:var(--here-bg);border-left-color:var(--here);opacity:1}
+.b.here::after{content:"VOCÊ ESTÁ AQUI";position:absolute;right:8px;top:-9px;font-family:var(--f-ui);font-size:.58rem;letter-spacing:.12em;font-weight:800;color:var(--brass-ink);background:var(--here);padding:2px 7px;border-radius:999px}
+.b strong{font-weight:700}
+.b mark{background:var(--brass-soft);color:inherit;padding:0 3px;border-radius:3px}
+.b.li{padding-left:34px}
+.b.li::before{content:"";position:absolute;left:18px;top:calc(var(--fs) * .78);width:7px;height:7px;border-radius:50%;background:var(--brass)}
+.b.sub{font-family:var(--f-ui);font-size:calc(var(--fs) * .78);font-weight:700;letter-spacing:.02em;color:var(--brass);margin-top:16px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-ui);font-size:.66rem;letter-spacing:.12em;font-weight:800;text-transform:uppercase;margin-bottom:2px}
+.tag i{font-style:normal;width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:.72rem;letter-spacing:0;background:var(--c);color:var(--surface)}
+.mk{border-left-color:currentColor}
+.mk>.txt{color:var(--ink)}
+.mk.key{--c:var(--mk-key);color:var(--mk-key);background:var(--mk-key-bg)} .mk.key .txt{font-weight:650}
+.mk.ask{--c:var(--mk-ask);color:var(--mk-ask);background:var(--mk-ask-bg)}
+.mk.ill{--c:var(--mk-ill);color:var(--mk-ill);background:var(--mk-ill-bg)}
+.mk.app{--c:var(--mk-app);color:var(--mk-app);background:var(--mk-app-bg)}
+.mk.call{--c:var(--mk-call);color:var(--mk-call);background:var(--mk-call-bg)}
+.mk.here{background:var(--here-bg);border-left-color:var(--here)}
+.nomk .tag{display:none}
+.nomk .mk{background:transparent;border-left-color:transparent}
+.nomk .mk.here{background:var(--here-bg);border-left-color:var(--here)}
+.read{background:var(--surface-2);border-left-color:var(--line-strong)}
+.read .ref-h{font-family:var(--f-ui);font-size:.72rem;font-weight:800;letter-spacing:.1em;color:var(--brass);text-transform:uppercase;display:block;margin-bottom:2px}
+.read sup,.vtxt sup{font-family:var(--f-ui);font-size:.62em;color:var(--brass);font-weight:700;margin-right:3px}
+.read .vt{font-style:italic}
+.pause{display:flex;align-items:center;gap:12px;font-family:var(--f-ui);font-size:.7rem;letter-spacing:.16em;font-weight:800;color:var(--muted);text-transform:uppercase}
+.pause::before,.pause::after{content:"";flex:1;border-top:2px dashed var(--line-strong)}
+.ref{display:inline-flex;align-items:center;border:1px solid var(--line-strong);background:var(--surface);color:var(--brass);font-family:var(--f-ui);font-size:.72em;font-weight:700;border-radius:999px;padding:1px 9px;vertical-align:.12em;white-space:nowrap;line-height:1.5}
+.ref:hover{background:var(--brass-soft);border-color:var(--brass)}
+.ref.miss{color:var(--muted);text-decoration:line-through}
+
+/* Mapa lateral */
+.map{position:sticky;top:calc(var(--hh) + 28px);align-self:start;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px 16px;box-shadow:var(--shadow-sm);min-width:0}
+.card h3{margin:0 0 10px;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:2px}
+.ol button{width:100%;display:flex;gap:8px;align-items:center;text-align:left;border:0;background:transparent;border-radius:8px;padding:6px 8px;font-size:.84rem}
+.ol button:hover{background:var(--surface-2)}
+.ol button:active{transform:none}
+.ol .st{width:10px;height:10px;border-radius:50%;border:2px solid var(--line-strong);flex:0 0 auto}
+.ol .done .st{background:var(--ok);border-color:var(--ok)}
+.ol .cur{background:var(--here-bg);font-weight:650}
+.ol .cur .st{border-color:var(--here);background:var(--here)}
+.ol .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ol .mm{flex:0 0 auto;color:var(--muted);font-size:.74rem;font-variant-numeric:tabular-nums}
+.ol .over .mm{color:var(--danger);font-weight:700}
+.bar{height:6px;border-radius:6px;background:var(--surface-2);overflow:hidden;margin:10px 0 6px}
+.bar i{display:block;height:100%;width:0;background:var(--brass);border-radius:6px;transition:width .3s}
+.small{font-size:.78rem;color:var(--muted)}
+.legend{display:grid;gap:6px;font-size:.8rem}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend b{width:12px;height:12px;border-radius:3px;background:currentColor;opacity:.85}
+
+/* Botões e campos comuns */
+.btn{border:1px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:8px 15px;font-size:.86rem;font-weight:550;white-space:nowrap}
+.btn:hover{background:var(--surface-2)}
+.btn.pri{background:var(--act);border-color:var(--act);color:var(--cover-ink)}
+.btn.pri:hover{background:var(--act-hover)}
+.btn.danger{color:var(--danger)}
+.btn.arm{background:var(--danger);border-color:var(--danger);color:#fff}
+.inp{width:100%;border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:10px 12px;background:var(--surface)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.lbl{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0}
+
+/* Gaveta da Bíblia */
+.scrim{position:fixed;inset:0;background:rgba(8,14,11,.45);z-index:55}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--surface);z-index:56;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.dh{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.dh h2{margin:0;font-family:var(--f-text);font-size:1.3rem;flex:1}
+.db{padding:16px 18px 30px;overflow:auto;flex:1;display:grid;gap:14px;align-content:start}
+.nav-b{display:grid;grid-template-columns:1fr 92px;gap:8px}
+.nav-b select{border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:9px 10px;background:var(--surface)}
+.vcard{border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;background:var(--surface-2)}
+.vcard h4{margin:0 0 6px;color:var(--brass);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:8px;align-items:center}
+.vcard h4 span{flex:1}
+.vcard h4 button{border:1px solid var(--line-strong);background:var(--surface);border-radius:999px;width:30px;height:28px;color:var(--ink)}
+.vtxt{margin:0;font-family:var(--f-text);font-size:1.1rem;line-height:1.55}
+.vtxt span{display:inline}
+.res{display:grid;gap:8px}
+.res button{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-sm);padding:9px 12px;font-family:var(--f-text);font-size:.98rem;line-height:1.4}
+.res button b{font-family:var(--f-ui);font-size:.75rem;color:var(--brass);display:block;letter-spacing:.04em}
+.res button:hover{background:var(--surface-2)}
+
+/* Editor */
+.editor{position:fixed;inset:0;z-index:45;background:var(--paper);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.eh,.ef,.ins{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-block:12px;background:var(--surface);border-bottom:1px solid var(--line)}
+.eh h2{margin:0;font-family:var(--f-text);font-size:1.3rem;flex:1;min-width:140px}
+.ef{display:grid;grid-template-columns:80px 2fr 1fr 1fr 140px 1fr;gap:10px;padding-block:12px;background:var(--surface);border-bottom:1px solid var(--line)}
+.ef label{display:grid;gap:4px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:0}
+.ef input{text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink);font-size:.95rem;padding:8px 10px}
+.ins{display:flex;gap:6px;flex-wrap:wrap;padding-block:10px;border-bottom:1px solid var(--line)}
+.ins button{border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:5px 10px;font-size:.8rem}
+.ins button code{color:var(--brass);font-weight:700;margin-right:5px;font-family:var(--f-mono)}
+.eb{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:0}
+.eb textarea{border:0;border-right:1px solid var(--line);padding:18px;resize:none;background:var(--surface);font-family:var(--f-mono);font-size:.92rem;line-height:1.6;min-height:0;outline:none}
+.eb .pv{overflow:auto;padding:4px 20px 40px;--fs:17px;margin:0;border-radius:0;border:0;box-shadow:none}
+.etabs{display:none}
+
+/* Modo púlpito */
+.pulpit{position:fixed;inset:0;z-index:50;background:var(--paper);display:grid;grid-template-columns:280px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto}
+.ptop{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface);border-bottom:1px solid var(--line);padding-block:10px;padding-top:calc(10px + env(safe-area-inset-top,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ptop .pt{font-family:var(--f-text);font-weight:600;font-size:1.15rem;flex:1;min-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clock{display:flex;align-items:baseline;gap:6px;font-variant-numeric:tabular-nums;font-weight:700;font-size:1.5rem}
+.clock small{font-size:.8rem;color:var(--muted);font-weight:600}
+.clock.warn{color:var(--warn)} .clock.over{color:var(--danger)}
+.secclock{font-size:.82rem;font-weight:650;padding:4px 10px;border-radius:999px;background:var(--surface-2);font-variant-numeric:tabular-nums;white-space:nowrap;max-width:min(320px,60vw);overflow:hidden;text-overflow:ellipsis}
+.secclock.over{background:var(--mk-call-bg);color:var(--danger)}
+.prail{border-right:1px solid var(--line);background:var(--surface);overflow:auto;padding:14px 10px}
+.pmain{overflow:auto;padding-block:30px 45vh;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.pmain .inner{max-width:920px;margin:0 auto}
+.pbar{grid-column:1/-1;height:4px;background:var(--surface-2);position:relative;margin-top:-4px;z-index:1}
+.pbot{grid-column:1/-1;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;background:var(--surface);border-top:1px solid var(--line);padding-block:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.big{border:0;background:var(--act);color:var(--cover-ink);border-radius:999px;padding:12px 26px;font-weight:700;font-size:1rem}
+.big:hover{background:var(--act-hover)}
+.hint{text-align:center;font-size:.72rem;color:var(--muted);width:100%}
+.verse-ov{position:fixed;inset:0;z-index:70;background:rgba(8,14,11,.72);display:grid;place-items:center;padding:24px}
+.verse-ov .vb{background:var(--surface);border-radius:22px;padding:30px 36px;max-width:960px;width:100%;box-shadow:var(--shadow-lg);max-height:85vh;overflow:auto}
+.verse-ov h3{margin:0 0 12px;color:var(--brass);letter-spacing:.1em;text-transform:uppercase;font-size:1rem}
+.verse-ov .vtxt{font-size:clamp(1.4rem,3.4vw,2.4rem);line-height:1.45}
+.verse-ov .btn{margin-top:22px}
+
+/* Janelas (conta, backup) */
+.ov{position:fixed;inset:0;z-index:60;background:rgba(8,14,11,.5);display:grid;place-items:center;padding:16px}
+.box{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);width:min(480px,100%);max-height:90vh;overflow:auto;padding:22px}
+.box h2{margin:0 0 6px;font-family:var(--f-text);font-size:1.4rem}
+.box p{margin:6px 0;color:var(--muted);font-size:.9rem}
+.box form,.box .stack{display:grid;gap:10px;margin-top:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.link{border:0;background:transparent;color:var(--muted);text-decoration:underline;padding:4px 0;font-size:.86rem}
+.nv-msg{font-size:.86rem;min-height:1.2em;color:var(--muted)}
+.nv-msg.err{color:var(--danger)}
+.nv-info{display:grid;gap:6px;font-size:.92rem;background:var(--surface-2);border-radius:var(--r);padding:14px 16px}
+.box textarea{width:100%;min-height:110px;border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:10px;font-family:var(--f-mono);font-size:.8rem;background:var(--surface)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:.88rem;z-index:90;box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;max-width:calc(100% - 32px)}
+.toast button{border:0;background:transparent;color:var(--brass-strong);font-weight:700;padding:0}
+
+/* Tela de boas-vindas (sem pregações) */
+.vazio{max-width:620px;margin:40px auto;text-align:center}
+.vazio h1{font-family:var(--f-text);font-size:2rem;margin:0 0 8px}
+.vazio p{color:var(--muted)}
+
+@media (max-width:1180px){.wrap{grid-template-columns:minmax(0,1fr);max-width:880px}.map{display:none}.secs{display:flex}}
+@media (max-width:1000px){.ef{grid-template-columns:80px 1fr 1fr}}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .lib{position:static;height:auto;border-right:0}
+  .app.reading .lib{display:none}
+  .app:not(.reading) .reader{display:none}
+  .back{display:block}
+  .hh{padding:16px;gap:14px}.hnum{min-width:60px;font-size:2rem}
+  .sheet{padding:4px 12px 20px}
+  .search{order:3;flex-basis:100%;max-width:none}
+  .tbtn .lb{display:none}.tbtn .sm{display:inline}.top{gap:10px}.top-actions{margin-left:0}
+  .eb{grid-template-columns:1fr}.eb textarea{border-right:0}
+  .eb .pv{display:none}.eb.ver textarea{display:none}.eb.ver .pv{display:block}
+  .etabs{display:flex}
+  .pulpit{grid-template-columns:1fr}
+  .prail{display:none}
+  .pmain{padding-block:20px 45vh}
+  .ptop .pt{order:5;flex-basis:100%}
+  .pbot .hint{display:none}
+}
+@media (max-width:560px){.ef{grid-template-columns:70px 1fr}.ef .wide{grid-column:1/-1}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 7h6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10h14V9M10 13h4"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="brand"><img src="icons/icon-192.png" alt=""><span>Púlpito<small>Minhas pregações</small></span></div>
+  <label class="search"><svg class="ic"><use href="#i-search"/></svg><input id="busca" type="search" placeholder="Buscar por título, texto ou referência (ex.: Jo 15)" aria-label="Buscar pregações" autocomplete="off"></label>
+  <div class="top-actions">
+    <button class="tbtn primary" id="bNovo"><svg class="ic"><use href="#i-plus"/></svg><span class="lb">Nova pregação</span><span class="sm">Nova</span></button>
+    <button class="tbtn" id="bBiblia" aria-label="Bíblia"><svg class="ic"><use href="#i-book"/></svg><span class="lb">Bíblia</span></button>
+    <button class="tbtn nuvem" id="bNuvem" data-st="off" aria-label="Conta e sincronização"><span class="dot"></span><span class="lb" id="nvTxt">Entrar</span></button>
+    <button class="tbtn" id="bBackup" aria-label="Backup"><svg class="ic"><use href="#i-box"/></svg><span class="lb">Backup</span></button>
+    <button class="tbtn" id="bTema" aria-label="Tema"></button>
+  </div>
+</header>
+
+<div class="app" id="app">
+  <aside class="lib" aria-label="Pregações">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-aba="todas" aria-selected="true">Todas <span class="cnt" id="cTodas">0</span></button>
+      <button class="tab" role="tab" data-aba="fav" aria-selected="false">Favoritas <span class="cnt" id="cFav">0</span></button>
+      <button class="tab" role="tab" data-aba="agenda" aria-selected="false">Agenda <span class="cnt" id="cAg">0</span></button>
+    </div>
+    <div class="pasta"><select id="serie" aria-label="Série"></select></div>
+    <ul class="list" id="lista"></ul>
+  </aside>
+
+  <section class="reader">
+    <div class="vazio" id="vazio" hidden>
+      <h1>Nenhuma pregação ainda</h1>
+      <p>Toque em <b>Nova pregação</b> para escrever o primeiro esboço. Ele fica guardado neste aparelho e funciona sem internet.</p>
+      <button class="btn pri" id="bNovo2">Nova pregação</button>
+    </div>
+    <div class="wrap" id="leitor">
+      <div class="col">
+        <button class="back" id="bVoltar">‹ Pregações</button>
+        <div class="hh">
+          <div class="hnum"><small>Sermão</small><span id="sNum"></span></div>
+          <div class="htitle"><h1 id="sTit"></h1><div class="meta" id="sMeta"></div></div>
+        </div>
+        <div class="tools">
+          <div class="grp"><button id="fMenos" aria-label="Diminuir letra">A−</button><span class="val" id="fVal">21</span><button id="fMais" aria-label="Aumentar letra">A+</button></div>
+          <div class="grp"><button id="bMarcas" aria-pressed="true">Marcações</button><button id="bRefs">Referências</button></div>
+          <div class="grp"><button id="bFav" aria-pressed="false">☆ Favorita</button><button id="bZerar">Recomeçar</button></div>
+          <div class="grp"><button id="bEditar">Editar</button><button id="bPulpito" class="go">Modo púlpito</button></div>
+        </div>
+        <div class="secs" id="secs" aria-label="Seções"></div>
+        <article class="sheet" id="sermao"></article>
+        <div class="card hist">
+          <h3>Onde já preguei</h3>
+          <ul id="histLista"></ul>
+          <div class="row" style="margin-top:10px"><button class="btn" id="bHist">+ Registrar pregação de hoje</button></div>
+        </div>
+      </div>
+      <aside class="map" aria-label="Mapa do sermão">
+        <div class="card"><h3>Mapa do sermão</h3><ul class="ol" id="mapa"></ul>
+          <div class="bar"><i id="mapBar"></i></div><div class="small" id="mapInfo"></div></div>
+        <div class="card"><h3>Marcações</h3><div class="legend">
+          <span style="color:var(--mk-key)"><b></b>Ponto-chave</span>
+          <span style="color:var(--mk-ask)"><b></b>Pergunta à igreja</span>
+          <span style="color:var(--mk-ill)"><b></b>Ilustração</span>
+          <span style="color:var(--mk-app)"><b></b>Aplicação</span>
+          <span style="color:var(--mk-call)"><b></b>Apelo</span>
+          <span style="color:var(--here)"><b></b>Você está aqui</span>
+        </div><p class="small" style="margin:10px 0 0">Toque em qualquer parágrafo para marcar onde você está. O que ficou para trás fica apagado.</p></div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<div id="camada"></div>
+
+<!-- Conta e sincronização -->
+<div class="ov" id="ovNv" hidden>
+  <div class="box" role="dialog" aria-labelledby="nvTit">
+    <h2 id="nvTit">Conta</h2>
+    <div id="nvSemCfg"><p>A sincronização ainda não foi configurada. Preencha o arquivo <b>config.js</b> (veja o LEIA-ME). Enquanto isso, tudo fica salvo neste aparelho.</p></div>
+    <form id="nvLogin">
+      <p>Use o mesmo e-mail e senha do Hinário. Entre no computador e no celular para as pregações aparecerem nos dois.</p>
+      <input class="inp" id="nvEmail" type="email" placeholder="E-mail" autocomplete="email">
+      <input class="inp" id="nvSenha" type="password" placeholder="Senha" autocomplete="current-password">
+      <div class="row"><button class="btn pri" type="submit">Entrar</button><button class="btn" type="button" id="nvCriar">Criar conta</button></div>
+      <button class="link" type="button" id="nvEsqueci">Esqueci a senha</button>
+      <div class="nv-msg" id="nvMsg"></div>
+    </form>
+    <div id="nvConta" class="stack">
+      <div class="nv-info"><span>Conta: <b id="nvQuem"></b></span><span>Última sincronização: <b id="nvQuando"></b></span><span id="nvPend"></span></div>
+      <div class="nv-msg" id="nvMsg2"></div>
+      <div class="row"><button class="btn pri" id="nvAgora">Sincronizar agora</button><button class="btn danger" id="nvSair">Sair desta conta</button></div>
+    </div>
+    <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn" id="nvFechar">Fechar</button></div>
+  </div>
+</div>
+
+<!-- Backup -->
+<div class="ov" id="ovBk" hidden>
+  <div class="box" role="dialog" aria-labelledby="bkTit">
+    <h2 id="bkTit">Backup</h2>
+    <p id="bkInfo"></p>
+    <div class="stack">
+      <div class="row"><button class="btn pri" id="bkBaixar">Baixar arquivo</button><button class="btn" id="bkCopiar">Copiar texto</button></div>
+      <p class="lbl" style="margin-top:8px">Restaurar</p>
+      <div class="row"><label class="btn" for="bkFile">Abrir arquivo de backup</label><input type="file" id="bkFile" accept=".json,application/json" hidden></div>
+      <textarea id="bkTxt" placeholder="…ou cole aqui o texto do backup" aria-label="Texto do backup"></textarea>
+      <div class="row"><button class="btn" id="bkImport">Restaurar do texto</button></div>
+      <p class="small">Restaurar junta as pregações do backup com as que já estão aqui. Nada é apagado.</p>
+    </div>
+    <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn" id="bkFechar">Fechar</button></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script>
+(function(){
+"use strict";
+var KEY="pulpito.v1";
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var sem=function(s){return String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"")};
+var norm=function(s){return sem(s).toLowerCase()};
+var uid=function(){return "p"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+var hojeISO=function(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+var dataBR=function(d){if(!d)return "";var p=d.split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:d};
+var fmt=function(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+
+/* ================= Livros da Bíblia e referências ================= */
+/* [abreviação, nome, capítulos, outros nomes] — na ordem da Bíblia */
+var LV=[["Gn","Gênesis",50],["Êx","Êxodo",40],["Lv","Levítico",27],["Nm","Números",36],["Dt","Deuteronômio",34],["Js","Josué",24],["Jz","Juízes",21],["Rt","Rute",4],
+["1Sm","1 Samuel",31],["2Sm","2 Samuel",24],["1Rs","1 Reis",22],["2Rs","2 Reis",25],["1Cr","1 Crônicas",29],["2Cr","2 Crônicas",36],["Ed","Esdras",10],["Ne","Neemias",13],["Et","Ester",10],
+["Jó","Jó",42],["Sl","Salmos",150,["Salmo"]],["Pv","Provérbios",31],["Ec","Eclesiastes",12],["Ct","Cantares",8,["Cânticos"]],["Is","Isaías",66],["Jr","Jeremias",52],["Lm","Lamentações",5],
+["Ez","Ezequiel",48],["Dn","Daniel",12],["Os","Oseias",14,["Oséias"]],["Jl","Joel",3],["Am","Amós",9],["Ob","Obadias",1],["Jn","Jonas",4],["Mq","Miqueias",7,["Miquéias"]],["Na","Naum",3],
+["Hc","Habacuque",3],["Sf","Sofonias",3],["Ag","Ageu",2],["Zc","Zacarias",14],["Ml","Malaquias",4],
+["Mt","Mateus",28],["Mc","Marcos",16],["Lc","Lucas",24],["Jo","João",21],["At","Atos",28],["Rm","Romanos",16],["1Co","1 Coríntios",16],["2Co","2 Coríntios",13],["Gl","Gálatas",6],
+["Ef","Efésios",6],["Fp","Filipenses",4],["Cl","Colossenses",4],["1Ts","1 Tessalonicenses",5],["2Ts","2 Tessalonicenses",3],["1Tm","1 Timóteo",6],["2Tm","2 Timóteo",4],["Tt","Tito",3],
+["Fm","Filemom",1],["Hb","Hebreus",13],["Tg","Tiago",5],["1Pe","1 Pedro",5],["2Pe","2 Pedro",3],["1Jo","1 João",5],["2Jo","2 João",1],["3Jo","3 João",1],["Jd","Judas",1],["Ap","Apocalipse",22]];
+/* Abreviações que só valem como referência sem versículo quando não são palavras comuns ("Os 3 pontos" não é Oseias 3) */
+var SEGURAS={gn:1,"êx":1,ex:1,lv:1,nm:1,dt:1,jz:1,sl:1,pv:1,jr:1,ez:1,dn:1,mt:1,mc:1,lc:1,jo:1,rm:1,gl:1,ef:1,fp:1,hb:1,tg:1,ap:1,mq:1,zc:1,sf:1,hc:1,
+  "1sm":1,"2sm":1,"1rs":1,"2rs":1,"1cr":1,"2cr":1,"1co":1,"2co":1,"1ts":1,"2ts":1,"1tm":1,"2tm":1,"1pe":1,"2pe":1,"1jo":1};
+var ALIAS={},ABREV={},nomes=[];
+(function(){
+  var formas=function(x){var m=/^(\d)\s?(.+)$/.exec(x);return m?[m[1]+m[2],m[1]+" "+m[2]]:[x]};
+  var add=function(f,i,abr){var k=f.toLowerCase();if(k in ALIAS)return;ALIAS[k]=i;if(abr)ABREV[k]=1;nomes.push(f)};
+  /* primeiro as formas com acento (Jó ≠ Jo), depois as sem acento */
+  [false,true].forEach(function(semAcento){
+    LV.forEach(function(l,i){
+      [l[0]].concat([l[1]],l[3]||[]).forEach(function(x,j){formas(x).forEach(function(f){add(semAcento?sem(f):f,i,j===0)})});
+    });
+  });
+  nomes.sort(function(a,b){return b.length-a.length});
+})();
+var REF_RE=new RegExp("(?<![\\p{L}\\d])("+nomes.map(function(n){return n.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}).join("|")+
+  ")\\.?\\s?(\\d{1,3})(?:[:.](\\d{1,3})(?:\\s?[-–]\\s?(\\d{1,3}))?)?(?![\\p{L}\\d])","giu");
+/* Interpreta uma referência encontrada; devolve {b,c,v1,v2} ou null */
+function interpreta(m){
+  var alias=m[1],k=alias.toLowerCase(),b=ALIAS[k];if(b==null)return null;
+  var c=+m[2],v1=m[3]?+m[3]:0,v2=m[4]?+m[4]:0,caps=LV[b][2],abr=!!ABREV[k];
+  var maiuscula=alias.charAt(0)!==alias.charAt(0).toLowerCase()||/^\d/.test(alias);
+  if(!v1){
+    if(!maiuscula)return null;
+    if(caps===1&&abr){v1=c;c=1}                 /* Jd 3 = Judas 1:3 */
+    else if(abr&&!SEGURAS[sem(k)]&&!SEGURAS[k])return null;
+  }
+  if(c<1||c>caps)return null;
+  if(v2&&v2<v1)v2=0;
+  return {b:b,c:c,v1:v1,v2:v2};
+}
+function refTxt(r){return LV[r.b][0]+" "+r.c+(r.v1?":"+r.v1+(r.v2&&r.v2>r.v1?"-"+r.v2:""):"")}
+function refNome(r){return LV[r.b][1]+" "+r.c+(r.v1?":"+r.v1+(r.v2&&r.v2>r.v1?"–"+r.v2:""):"")}
+function achaRefs(txt){var out=[],m;REF_RE.lastIndex=0;
+  while((m=REF_RE.exec(txt))){var r=interpreta(m);if(r)out.push({i:m.index,f:m.index+m[0].length,txt:m[0],r:r})}return out}
+function parseRef(s){var a=achaRefs(String(s||"").trim());return a.length?a[0].r:null}
+
+/* ================= Bíblia (fica guardada no aparelho) ================= */
+var BIBLIA=null,bibEstado="carregando",bibIndice=null;
+function carregaBiblia(){
+  bibEstado="carregando";
+  fetch("biblia/blivre.json").then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+  .then(function(d){BIBLIA=d.livros;bibEstado="ok";renderReader();if(gaveta)gaveta.render()})
+  .catch(function(){bibEstado="erro";renderReader();if(gaveta)gaveta.render()});
+}
+/* Versículos de uma referência: [[nº, texto]], [] se não existir, null se a Bíblia ainda não carregou */
+function versos(r){
+  if(!BIBLIA)return null;var cap=(BIBLIA[r.b]||[])[r.c-1];if(!cap)return [];
+  var a=r.v1||1,z=r.v2||(r.v1?r.v1:cap.length),out=[];
+  for(var v=a;v<=z&&v<=cap.length;v++)out.push([v,cap[v-1]]);return out;
+}
+function versosHTML(vs){return vs.map(function(x){return "<span><sup>"+x[0]+"</sup>"+esc(x[1])+" </span>"}).join("")}
+function textoPlano(r){var vs=versos(r)||[];return refNome(r)+" — "+vs.map(function(x){return (vs.length>1?x[0]+" ":"")+x[1]}).join(" ")+" (Bíblia Livre)"}
+function buscaBiblia(q){
+  if(!BIBLIA)return [];
+  if(!bibIndice){bibIndice=[];BIBLIA.forEach(function(l,b){l.forEach(function(cap,c){cap.forEach(function(t,v){bibIndice.push([b,c,v,norm(t)])})})})}
+  var termos=norm(q).split(/\s+/).filter(Boolean),out=[];
+  for(var i=0;i<bibIndice.length&&out.length<80;i++){var x=bibIndice[i];
+    if(termos.every(function(t){return x[3].indexOf(t)>=0}))out.push({b:x[0],c:x[1]+1,v1:x[2]+1,v2:0})}
+  return out;
+}
+
+/* ================= Dados ================= */
+var EXEMPLOS=[
+{num:1,titulo:"A Videira e os Ramos",base:"Jo 15:1-8",serie:"Exemplo",culto:"Culto de domingo",texto:
+"# Introdução {4}\nQuem já viu uma parreira carregada sabe: o galho não faz força para dar uva. Ele só precisa estar **ligado ao tronco**.\n?? Quantos aqui se sentem cansados de \"fazer força\" na vida cristã?\n[pausa]\nLeitura do texto: Jo 15:1-8\n!! Tema: fruto não é esforço, é permanência.\n\n"+
+"# I. Jesus é a videira verdadeira {8}\n> Jo 15:1\nIsrael era chamado de vinha de Deus (Sl 80:8; Is 5:7), mas não deu o fruto esperado.\nJesus diz \"Eu sou a videira ==verdadeira==\": tudo o que Israel não foi, Ele é.\n- A vida não vem do ramo, vem da videira.\n- Nenhum ramo se sustenta sozinho.\n[ilustração] O ventilador mais caro da loja não gira desligado da tomada.\n\n"+
+"# II. O Pai é o lavrador que poda {8}\n> Jo 15:2\nA poda dói, mas não é castigo: é cuidado para dar **mais** fruto.\nA correção \"depois produz fruto pacífico de justiça\" (Hb 12:11).\n!! Deus só poda o ramo que Ele quer ver frutificar.\n?? O que Deus está podando na sua vida hoje?\nTudo coopera para o bem: Rm 8:28\n\n"+
+"# III. Permanecer é a condição do fruto {10}\n> Jo 15:4-5\n\"Sem mim nada podeis fazer\": não é pouco, é **nada**.\nPermanecer é ficar, morar, continuar. É relacionamento diário, não visita de domingo.\n- Na Palavra (Jo 15:7)\n- Na oração\n- Na obediência (1Jo 2:6)\nO fruto é o caráter de Cristo: Gl 5:22-23\n[ilustração] A árvore junto ao ribeiro (Sl 1:3) não se preocupa com a seca.\n\n"+
+"# Aplicação {5}\n[aplicação] Esta semana: 15 minutos por dia só com a Palavra, antes de pegar o celular.\n[aplicação] Escolha uma área da sua vida para entregar à poda de Deus.\n!! Ramo não se esforça para dar fruto; ramo permanece.\n\n"+
+"# Conclusão e apelo {4}\n> Jo 15:8\nO Pai é glorificado quando damos muito fruto.\n[pausa]\n?? Você está ligado à videira, ou só pendurado nela?\n[apelo] Convite à frente para oração.\nAp 3:20"}
+];
+var MODELO="# Introdução {5}\nComece aqui. Toque nos botões acima para inserir marcações.\n\n# I. Primeiro ponto {10}\n> Jo 3:16\n!! Frase principal deste ponto\n\n# II. Segundo ponto {10}\n\n# Conclusão e apelo {5}\n[apelo] ";
+var db={sermoes:[],prog:{},cfg:{fonte:window.innerWidth<600?19:21,pfs:window.innerWidth<600?24:30,marcas:true,tema:"auto",vel:3},meta:null};
+function metaPadrao(){return {visto:{},pend:{},apagados:{},ultimoPull:null,ultimoSync:null}}
+/* Campos que sincronizam entre aparelhos */
+var CAMPOS=["num","titulo","base","serie","data","culto","fav","texto","historico"];
+function dadosDe(s){var o={};CAMPOS.forEach(function(k){if(s[k]!==undefined&&s[k]!==null)o[k]=s[k]});return o}
+function assinatura(s){return JSON.stringify(CAMPOS.map(function(k){return s[k]===undefined?null:s[k]}))}
+function load(){
+  db.meta=metaPadrao();var tinha=false;
+  try{var r=localStorage.getItem(KEY);if(r){var d=JSON.parse(r);if(d&&Array.isArray(d.sermoes)){tinha=true;db.sermoes=d.sermoes;db.prog=d.prog||{};
+    if(d.cfg)Object.assign(db.cfg,d.cfg);if(d.meta)db.meta=Object.assign(metaPadrao(),d.meta)}}}catch(e){}
+  if(!tinha){
+    /* exemplo com id fixo e data antiga: nunca sobrescreve o que já está na nuvem */
+    db.sermoes=EXEMPLOS.map(function(s){return Object.assign({id:"exemplo-"+s.num,fav:false,data:hojeISO(),historico:[],atualizado:1},s)});
+    db.sermoes.forEach(function(s){db.meta.visto[s.id]=assinatura(s)});
+  }
+  marcarMudancas();persistir();
+}
+function marcarMudancas(){
+  var m=db.meta,agora=Date.now(),ids={};
+  db.sermoes.forEach(function(s){ids[s.id]=1;var a=assinatura(s);
+    if(m.visto[s.id]!==a){m.visto[s.id]=a;s.atualizado=agora;m.pend[s.id]=1;delete m.apagados[s.id]}});
+  Object.keys(m.visto).forEach(function(id){if(!ids[id]){delete m.visto[id];m.apagados[id]=agora;m.pend[id]=1}});
+}
+function persistir(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast("Não foi possível salvar neste navegador. Faça um backup.")}}
+function save(){marcarMudancas();persistir();agendarSync()}
+function salvarLocal(){persistir()} /* progresso e preferências: só neste aparelho */
+function byId(id){for(var i=0;i<db.sermoes.length;i++)if(db.sermoes[i].id===id)return db.sermoes[i];return null}
+function prog(id){return db.prog[id]||(db.prog[id]={pos:null,tempos:[]})}
+function proxNum(){return db.sermoes.reduce(function(a,s){return Math.max(a,+s.num||0)},0)+1}
+
+/* ================= Linguagem de marcação ================= */
+var MARC=[["!!","key","Ponto-chave","!"],["??","ask","Pergunte à igreja","?"],["[ilustração]","ill","Ilustração","❝"],["[ilustracao]","ill","Ilustração","❝"],
+  ["[aplicação]","app","Aplicação","→"],["[aplicacao]","app","Aplicação","→"],["[apelo]","call","Apelo","♥"]];
+function parse(txt){
+  var secs=[],cur=null,i=0;
+  String(txt||"").split("\n").forEach(function(raw){
+    var l=raw.trim();if(!l)return;
+    var m=/^#\s+(.+?)(?:\s*\{(\d+)\})?$/.exec(l);
+    if(m&&!/^##/.test(l)){cur={titulo:m[1],min:m[2]?+m[2]:0,blocos:[]};secs.push(cur);return}
+    if(!cur){cur={titulo:"Início",min:0,blocos:[]};secs.push(cur)}
+    var b=null,low=l.toLowerCase();
+    if(low==="[pausa]")b={t:"pause"};
+    else if(/^##\s+/.test(l))b={t:"sub",x:l.replace(/^##\s+/,"")};
+    else if(l.charAt(0)===">")b={t:"read",ref:l.slice(1).trim()};
+    else if(/^[-•]\s+/.test(l))b={t:"li",x:l.replace(/^[-•]\s+/,"")};
+    else{for(var j=0;j<MARC.length;j++)if(low.indexOf(MARC[j][0])===0){b={t:"mk",k:MARC[j][1],nome:MARC[j][2],ic:MARC[j][3],x:l.slice(MARC[j][0].length).trim()};break}
+      if(!b)b={t:"p",x:l}}
+    b.i=i++;cur.blocos.push(b);
+  });
+  return secs;
+}
+function inline(s){
+  var refs=achaRefs(s),out="",p=0;
+  refs.forEach(function(x){out+=fmtTxt(s.slice(p,x.i))+refBtn(x.r,x.txt);p=x.f});
+  return out+fmtTxt(s.slice(p));
+}
+function fmtTxt(s){return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/==(.+?)==/g,"<mark>$1</mark>")}
+function refBtn(r,txt){var vs=versos(r);return '<button type="button" class="ref'+(vs&&!vs.length?" miss":"")+'" data-ref="'+esc(refTxt(r))+'">'+esc(txt||refTxt(r))+"</button>"}
+function blocoHTML(b){
+  var c='data-i="'+b.i+'"';
+  if(b.t==="pause")return '<div class="b pause" '+c+'>Pausa · respire e olhe a igreja</div>';
+  if(b.t==="sub")return '<div class="b sub" '+c+'>'+inline(b.x)+'</div>';
+  if(b.t==="read"){var r=parseRef(b.ref),vs=r?versos(r):[];
+    var corpo=!r?"Referência não reconhecida: "+esc(b.ref):vs===null?(bibEstado==="erro"?"Bíblia ainda não baixada neste aparelho.":"Carregando a Bíblia…"):vs.length?versosHTML(vs):"Esse trecho não existe.";
+    return '<div class="b read" '+c+'><span class="ref-h">Leitura · '+esc(r?refNome(r):b.ref)+'</span><span class="vt vtxt">'+corpo+'</span></div>'}
+  if(b.t==="li")return '<div class="b li" '+c+'>'+inline(b.x)+'</div>';
+  if(b.t==="mk")return '<div class="b mk '+b.k+'" '+c+'><span class="tag"><i>'+b.ic+'</i>'+b.nome+'</span><div class="txt">'+inline(b.x)+'</div></div>';
+  return '<div class="b" '+c+'>'+inline(b.x)+'</div>';
+}
+function rotulo(s,si,n){var m=/^([IVXL]+)[.)]\s*(.*)$/.exec(s.titulo);if(m)return {rn:m[1],t:m[2]};
+  if(si===0&&n>1)return {rn:"In",t:s.titulo};if(si===n-1&&n>1)return {rn:"Fim",t:s.titulo};return {rn:String(si+1),t:s.titulo}}
+function sermaoHTML(secs,pref){pref=pref||"sec";
+  if(!secs.length)return '<p class="empty">Esta pregação ainda está vazia. Toque em <b>Editar</b> para escrever.</p>';
+  return secs.map(function(s,si){var r=rotulo(s,si,secs.length);
+    return '<section class="sec" id="'+pref+'-'+si+'"><div class="sec-h"><span class="rn">'+esc(r.rn)+'</span><h2>'+inline(r.t)+'</h2>'+(s.min?'<span class="min">'+s.min+' min</span>':"")+'</div>'+s.blocos.map(blocoHTML).join("")+'</section>'}).join("");
+}
+var totalBlocos=function(secs){return secs.reduce(function(a,s){return a+s.blocos.length},0)};
+var secDe=function(secs,i){for(var k=0;k<secs.length;k++)for(var j=0;j<secs[k].blocos.length;j++)if(secs[k].blocos[j].i===i)return k;return -1};
+var minTotal=function(secs){return secs.reduce(function(a,s){return a+s.min},0)};
+function refsDe(txt){var vistos={},out=[];achaRefs(txt||"").forEach(function(x){var t=refTxt(x.r);if(!vistos[t]){vistos[t]=1;out.push(x.r)}});
+  String(txt||"").split("\n").forEach(function(l){l=l.trim();if(l.charAt(0)===">"){var r=parseRef(l.slice(1));if(r&&!vistos[refTxt(r)]){vistos[refTxt(r)]=1;out.push(r)}}});
+  return out}
+
+/* ================= Biblioteca ================= */
+var E={atual:null,aba:"todas",serie:"",busca:""};
+function ordenados(){return db.sermoes.slice().sort(function(a,b){return (+b.num||0)-(+a.num||0)})}
+function renderList(){
+  var hoje=hojeISO();
+  $("#cTodas").textContent=db.sermoes.length;$("#cFav").textContent=db.sermoes.filter(function(s){return s.fav}).length;
+  $("#cAg").textContent=db.sermoes.filter(function(s){return s.data&&s.data>=hoje}).length;
+  var series={};db.sermoes.forEach(function(s){if(s.serie)series[s.serie]=(series[s.serie]||0)+1});
+  if(E.serie&&!series[E.serie])E.serie="";
+  $("#serie").innerHTML='<option value="">Todas as séries</option>'+Object.keys(series).sort().map(function(s){return '<option value="'+esc(s)+'"'+(s===E.serie?" selected":"")+'>'+esc(s)+' ('+series[s]+')</option>'}).join("");
+  var q=norm(E.busca).trim(),qr=parseRef(E.busca);
+  var L=ordenados().filter(function(s){
+    if(E.serie&&s.serie!==E.serie)return false;if(E.aba==="fav"&&!s.fav)return false;if(E.aba==="agenda"&&!(s.data&&s.data>=hoje))return false;
+    if(!q)return true;
+    if(norm([s.num,s.titulo,s.base,s.serie,s.culto,s.texto].join(" ")).indexOf(q)>=0)return true;
+    if(qr)return refsDe(s.base+"\n"+s.texto).some(function(r){return r.b===qr.b&&(!qr.c||r.c===qr.c)});
+    return false});
+  if(E.aba==="agenda")L.sort(function(a,b){return a.data.localeCompare(b.data)});
+  var h="",ultimoGrupo=null;
+  L.forEach(function(s){
+    if(E.aba==="agenda"){var g=s.data===hoje?"Hoje":dataBR(s.data);if(g!==ultimoGrupo){h+='<li class="grp-h">'+g+'</li>';ultimoGrupo=g}}
+    var secs=parse(s.texto),tot=totalBlocos(secs),pos=(db.prog[s.id]||{}).pos,pct=pos==null||!tot?0:Math.round((pos+1)/tot*100);
+    h+='<li><button class="item'+(s.id===E.atual?" on":"")+'" data-id="'+esc(s.id)+'"><span class="n">'+esc(s.num)+'</span><span class="t"><b>'+esc(s.titulo||"Sem título")+'</b><small>'+esc([s.base,dataBR(s.data),s.serie].filter(Boolean).join(" · "))+'</small></span>'+
+      (s.fav?'<span class="fav" aria-label="Favorita">★</span>':"")+(pct?'<span class="prog">'+pct+'%</span>':"")+'</button></li>'});
+  $("#lista").innerHTML=h||'<li class="empty">'+(db.sermoes.length?"Nenhuma pregação encontrada.<br>Tente outra busca ou outra aba.":"Nenhuma pregação ainda.")+'</li>';
+}
+$("#lista").addEventListener("click",function(e){var b=e.target.closest(".item");if(!b)return;abrir(b.dataset.id);$("#app").classList.add("reading");window.scrollTo(0,0)});
+document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){E.aba=t.dataset.aba;document.querySelectorAll(".tab").forEach(function(x){x.setAttribute("aria-selected",x===t)});renderList()}});
+$("#serie").onchange=function(){E.serie=this.value;renderList()};
+$("#busca").addEventListener("input",function(){E.busca=this.value;renderList();if(window.innerWidth<=860)$("#app").classList.remove("reading")});
+$("#bVoltar").onclick=function(){$("#app").classList.remove("reading")};
+function abrir(id){E.atual=id;try{localStorage.setItem(KEY+".ultimo",id)}catch(e){}renderList();renderReader()}
+
+/* ================= Leitor ================= */
+function renderReader(){
+  var s=byId(E.atual);$("#vazio").hidden=!!s;$("#leitor").hidden=!s;if(!s)return;
+  var secs=parse(s.texto),refs=refsDe(s.texto);
+  $("#sNum").textContent=s.num;$("#sTit").textContent=s.titulo||"Sem título";
+  var mt=minTotal(secs);
+  $("#sMeta").innerHTML=(s.base?'<span class="base">'+esc(s.base)+'</span>':"")+(s.serie?'<span>'+esc(s.serie)+'</span>':"")+
+    (s.data||s.culto?'<span>'+esc([dataBR(s.data),s.culto].filter(Boolean).join(" · "))+'</span>':"")+(mt?'<span>~'+mt+' min</span>':"")+'<span>'+refs.length+' referência'+(refs.length===1?"":"s")+'</span>';
+  $("#bFav").textContent=s.fav?"★ Favorita":"☆ Favorita";$("#bFav").setAttribute("aria-pressed",!!s.fav);
+  $("#bMarcas").setAttribute("aria-pressed",db.cfg.marcas);
+  document.documentElement.style.setProperty("--fs",db.cfg.fonte+"px");$("#fVal").textContent=db.cfg.fonte;
+  var sh=$("#sermao");sh.innerHTML=sermaoHTML(secs);sh.classList.toggle("nomk",!db.cfg.marcas);
+  var hs=s.historico||[];
+  $("#histLista").innerHTML=hs.length?hs.slice().reverse().map(function(x,k){var idx=hs.length-1-k;return '<li><span>'+esc(dataBR(x.data))+(x.local?" · "+esc(x.local):"")+(x.min?" · "+x.min+" min":"")+'</span><button class="mini" data-h="'+idx+'" aria-label="Remover registro">✕</button></li>'}).join(""):'<li class="small">Ainda não registrada. Ao sair do modo púlpito o app pergunta se quer registrar.</li>';
+  posicao(sh,s.id);renderMapa();
+}
+function posicao(raiz,id){var pos=prog(id).pos;
+  raiz.querySelectorAll(".b").forEach(function(el){var i=+el.dataset.i;el.classList.toggle("done",pos!=null&&i<pos);el.classList.toggle("here",i===pos)})}
+function renderMapa(){
+  var s=byId(E.atual);if(!s)return;var secs=parse(s.texto),pos=prog(s.id).pos,cs=pos==null?-1:secDe(secs,pos),tot=totalBlocos(secs);
+  var cls=function(i){return i<cs?"done":i===cs?"cur":""};
+  $("#mapa").innerHTML=secs.map(function(x,i){return '<li><button data-sec="'+i+'" class="'+cls(i)+'"><span class="st"></span><span class="nm">'+esc(x.titulo)+'</span><span class="mm">'+(x.min?x.min+"′":"")+'</span></button></li>'}).join("");
+  $("#secs").innerHTML=secs.map(function(x,i){return '<button data-sec="'+i+'" class="'+cls(i)+'">'+esc(rotulo(x,i,secs.length).rn+" · "+rotulo(x,i,secs.length).t)+'</button>'}).join("");
+  var pct=pos==null||!tot?0:Math.round((pos+1)/tot*100);$("#mapBar").style.width=pct+"%";
+  var rest=secs.slice(Math.max(cs,0)).reduce(function(a,x){return a+x.min},0);
+  $("#mapInfo").textContent=pos==null?"Ainda não começou. Toque num parágrafo para marcar.":pct+"% do sermão"+(rest?" · faltam ~"+rest+" min":"");
+}
+function irSecao(e){var b=e.target.closest("[data-sec]");if(!b)return;var el=document.getElementById("sec-"+b.dataset.sec);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}
+$("#mapa").addEventListener("click",irSecao);$("#secs").addEventListener("click",irSecao);
+$("#sermao").addEventListener("click",function(e){
+  var r=e.target.closest(".ref");if(r){abrirBiblia({ref:r.dataset.ref});return}
+  var b=e.target.closest(".b");if(!b)return;var p=prog(E.atual);p.pos=(p.pos===+b.dataset.i)?null:+b.dataset.i;salvarLocal();posicao($("#sermao"),E.atual);renderMapa();renderList();
+});
+$("#fMenos").onclick=function(){db.cfg.fonte=Math.max(14,db.cfg.fonte-1);salvarLocal();renderReader()};
+$("#fMais").onclick=function(){db.cfg.fonte=Math.min(34,db.cfg.fonte+1);salvarLocal();renderReader()};
+$("#bMarcas").onclick=function(){db.cfg.marcas=!db.cfg.marcas;salvarLocal();renderReader()};
+$("#bFav").onclick=function(){var s=byId(E.atual);if(!s)return;s.fav=!s.fav;save();renderReader();renderList()};
+$("#bZerar").onclick=function(){var p=prog(E.atual);p.pos=null;p.tempos=[];salvarLocal();renderReader();renderList();toast("Posição apagada. Pronto para começar do início.")};
+$("#bRefs").onclick=function(){abrirBiblia({})};
+$("#bHist").onclick=function(){var s=byId(E.atual);if(!s)return;(s.historico=s.historico||[]).push({data:hojeISO(),local:s.culto||""});save();renderReader();toast("Registrado em "+dataBR(hojeISO()))};
+$("#histLista").addEventListener("click",function(e){var b=e.target.closest("[data-h]");if(!b)return;var s=byId(E.atual);s.historico.splice(+b.dataset.h,1);save();renderReader()});
+$("#bNovo2").onclick=function(){editor(true)};
+
+/* ================= Gaveta da Bíblia ================= */
+/* op: {ref, inserir:function(texto)} — inserir existe quando aberta pelo editor */
+var gaveta=null;
+function abrirBiblia(op){
+  fecharGaveta();
+  var st={ref:op.ref?parseRef(op.ref):null,busca:"",inserir:op.inserir||null};
+  if(!st.ref&&op.ref)st.busca=op.ref;
+  var cam=document.createElement("div");cam.id="gaveta";document.body.appendChild(cam);
+  gaveta={render:render,st:st};
+  function render(){
+    var s=byId(E.atual),refs=s?refsDe(s.base+"\n"+s.texto):[],r=st.ref;
+    var livroSel=r?r.b:42,capSel=r?r.c:1;
+    var corpo="";
+    if(bibEstado==="carregando")corpo='<p class="small">Carregando a Bíblia…</p>';
+    else if(bibEstado==="erro")corpo='<div class="vcard"><h4><span>Bíblia não baixada</span></h4><p class="small">Abra o app uma vez com internet para guardar a Bíblia neste aparelho. Depois ela funciona offline.</p><div class="row" style="margin-top:8px"><button class="btn" id="gTentar">Tentar de novo</button></div></div>';
+    else if(r){var vs=versos(r);
+      corpo='<div class="vcard"><h4><button id="gAnt" aria-label="Capítulo anterior">‹</button><span>'+esc(refNome(r))+'</span><button id="gProx" aria-label="Próximo capítulo">›</button></h4>'+
+        (vs.length?'<p class="vtxt">'+versosHTML(vs)+'</p>':'<p class="small">Esse trecho não existe.</p>')+'</div>'+
+        '<div class="chips">'+(st.inserir?'<button class="btn pri" id="gIns">Inserir leitura</button><button class="btn" id="gInsRef">Inserir só a referência</button>':s?'<button class="btn pri" id="gIns">Inserir leitura na pregação</button>':"")+
+        '<button class="btn" id="gCop">Copiar texto</button><button class="btn" id="gGrande">Mostrar grande</button></div>'+
+        (r.v1?'<button class="link" id="gCapTodo">Ver o capítulo inteiro</button>':"");
+    }else if(st.busca){var rs=buscaBiblia(st.busca);
+      corpo='<p class="lbl">'+(rs.length?(rs.length>=80?"Primeiros 80 versículos":rs.length+" versículo"+(rs.length>1?"s":""))+' com “'+esc(st.busca)+'”':"Nada encontrado para “"+esc(st.busca)+"”")+'</p><div class="res">'+
+        rs.map(function(x){return '<button data-r="'+esc(refTxt(x))+'"><b>'+esc(refNome(x))+'</b>'+esc(BIBLIA[x.b][x.c-1][x.v1-1])+'</button>'}).join("")+'</div>'}
+    cam.innerHTML='<div class="scrim" id="gScrim"></div><aside class="drawer" role="dialog" aria-label="Bíblia">'+
+      '<div class="dh"><h2>Bíblia</h2><button class="btn" id="gX">Fechar</button></div><div class="db">'+
+      '<form id="gForm"><input class="inp" id="gQ" placeholder="Referência (Jo 15:5, Sl 23) ou palavra" value="'+esc(r?refTxt(r):st.busca)+'" autocomplete="off" enterkeyhint="search"></form>'+
+      '<div class="nav-b"><select id="gLivro" aria-label="Livro">'+LV.map(function(l,i){return '<option value="'+i+'"'+(i===livroSel?" selected":"")+'>'+esc(l[1])+'</option>'}).join("")+'</select>'+
+      '<select id="gCap" aria-label="Capítulo">'+Array.from({length:LV[livroSel][2]},function(_,i){return '<option'+(i+1===capSel?" selected":"")+'>'+(i+1)+'</option>'}).join("")+'</select></div>'+
+      corpo+
+      (refs.length?'<div><p class="lbl" style="margin-bottom:8px">Referências desta pregação ('+refs.length+')</p><div class="chips">'+refs.map(function(x){return refBtn(x)}).join("")+'</div></div>':"")+
+      '<p class="small">Texto: Bíblia Livre (BLIVRE), licença Creative Commons Atribuição. Guardada neste aparelho para uso sem internet.</p>'+
+      '</div></aside>';
+    var q=function(id){return cam.querySelector(id)};
+    q("#gScrim").onclick=fecharGaveta;q("#gX").onclick=fecharGaveta;
+    q("#gForm").onsubmit=function(e){e.preventDefault();var v=q("#gQ").value.trim(),rr=parseRef(v);if(rr){st.ref=rr;st.busca=""}else{st.ref=null;st.busca=v.length>=3?v:""}render()};
+    q("#gLivro").onchange=function(){st.ref={b:+this.value,c:1,v1:0,v2:0};st.busca="";render()};
+    q("#gCap").onchange=function(){st.ref={b:+q("#gLivro").value,c:+this.value,v1:0,v2:0};render()};
+    cam.querySelectorAll(".ref,[data-r]").forEach(function(b){b.onclick=function(){st.ref=parseRef(b.dataset.ref||b.dataset.r);st.busca="";render()}});
+    if(q("#gTentar"))q("#gTentar").onclick=function(){carregaBiblia();render()};
+    if(r&&bibEstado==="ok"){
+      var mudaCap=function(d){var b=r.b,c=r.c+d;if(c<1){b--;if(b<0)return;c=LV[b][2]}else if(c>LV[b][2]){b++;if(b>=LV.length)return;c=1}st.ref={b:b,c:c,v1:0,v2:0};render()};
+      q("#gAnt").onclick=function(){mudaCap(-1)};q("#gProx").onclick=function(){mudaCap(1)};
+      if(q("#gCapTodo"))q("#gCapTodo").onclick=function(){st.ref={b:r.b,c:r.c,v1:0,v2:0};render()};
+      q("#gCop").onclick=function(){copiar(textoPlano(r),"Texto copiado")};
+      q("#gGrande").onclick=function(){versoGrande(refTxt(r))};
+      if(q("#gIns"))q("#gIns").onclick=function(){
+        if(st.inserir){st.inserir("\n> "+refTxt(r)+"\n");fecharGaveta();return}
+        var s2=byId(E.atual);s2.texto=String(s2.texto||"").replace(/\s*$/,"")+"\n> "+refTxt(r);save();renderReader();renderList();fecharGaveta();toast("Leitura de "+refTxt(r)+" inserida no fim da pregação")};
+      if(q("#gInsRef"))q("#gInsRef").onclick=function(){st.inserir(refTxt(r));fecharGaveta()};
+    }
+  }
+  render();
+  setTimeout(function(){var i=document.querySelector("#gQ");if(i&&!st.ref&&window.innerWidth>860)i.focus()},30);
+}
+function fecharGaveta(){var g=document.getElementById("gaveta");if(g)g.remove();gaveta=null}
+$("#bBiblia").onclick=function(){abrirBiblia({})};
+function copiar(t,msg){var fb=function(){toast("Não foi possível copiar neste aparelho.")};try{navigator.clipboard.writeText(t).then(function(){toast(msg||"Copiado")},fb)}catch(e){fb()}}
+function versoGrande(ref){
+  var r=parseRef(ref),vs=r?versos(r):null,d=document.createElement("div");d.className="verse-ov";
+  d.innerHTML='<div class="vb" role="dialog" aria-label="Versículo"><h3>'+esc(r?refNome(r):ref)+'</h3><p class="vtxt">'+(vs&&vs.length?versosHTML(vs):vs===null?"A Bíblia ainda não foi carregada.":"Esse trecho não existe.")+'</p><button class="btn">Fechar (Esc)</button></div>';
+  d.onclick=function(e){if(e.target===d||e.target.closest(".btn"))d.remove()};document.body.appendChild(d);
+}
+
+/* ================= Editor ================= */
+var INS=[["#","Seção","\n# Novo ponto {5}\n"],["##","Subtítulo","\n## "],[">","Leitura",null],["!!","Ponto-chave","\n!! "],["??","Pergunta","\n?? "],["[ilustração]","Ilustração","\n[ilustração] "],
+  ["[aplicação]","Aplicação","\n[aplicação] "],["[apelo]","Apelo","\n[apelo] "],["[pausa]","Pausa","\n[pausa]\n"],["-","Tópico","\n- "],["**","Negrito","**"],["==","Grifo","=="]];
+var edAberto=false;
+function editor(novo){
+  var s=novo?{id:uid(),num:proxNum(),titulo:"",base:"",serie:E.serie||"",data:hojeISO(),culto:"",fav:false,historico:[],texto:MODELO}:byId(E.atual);if(!s)return;
+  edAberto=true;
+  var cam=document.createElement("div");cam.id="edCam";document.body.appendChild(cam);
+  cam.innerHTML='<div class="editor" role="dialog" aria-label="Editor">'+
+    '<div class="eh"><h2>'+(novo?"Nova pregação":"Editar pregação")+'</h2>'+
+      (novo?"":'<button class="btn danger" id="eDel">Excluir</button>')+'<button class="btn" id="eX">Cancelar</button><button class="btn pri" id="eS">Salvar</button></div>'+
+    '<div class="ef"><label>Nº<input class="inp" id="eN" inputmode="numeric" value="'+esc(s.num)+'"></label>'+
+      '<label class="wide">Título<input class="inp" id="eT" value="'+esc(s.titulo)+'" placeholder="Ex.: A Videira e os Ramos"></label>'+
+      '<label>Texto-base<input class="inp" id="eB" value="'+esc(s.base)+'" placeholder="Jo 15:1-8"></label>'+
+      '<label>Série<input class="inp" id="eSe" value="'+esc(s.serie)+'" placeholder="Ex.: Eu Sou — João" list="eSeries"></label>'+
+      '<label>Data<input class="inp" id="eD" type="date" value="'+esc(s.data)+'"></label>'+
+      '<label class="wide">Culto / local<input class="inp" id="eC" value="'+esc(s.culto)+'" placeholder="Culto de domingo, 19h"></label></div>'+
+    '<datalist id="eSeries">'+Object.keys(db.sermoes.reduce(function(a,x){if(x.serie)a[x.serie]=1;return a},{})).map(function(x){return '<option value="'+esc(x)+'">'}).join("")+'</datalist>'+
+    '<div class="ins">'+INS.map(function(x,i){return '<button type="button" data-n="'+i+'"><code>'+esc(x[0])+'</code>'+x[1]+'</button>'}).join("")+
+      '<button type="button" id="eBib"><code>📖</code>Buscar na Bíblia</button>'+
+      '<span class="etabs" style="margin-left:auto;gap:6px"><button type="button" id="eVer">Ver como fica</button></span></div>'+
+    '<div class="eb" id="eBody"><textarea id="eTx" spellcheck="true" aria-label="Texto da pregação"></textarea><div class="pv sheet" id="ePv"></div></div></div>';
+  var tx=cam.querySelector("#eTx"),inicial=null;tx.value=s.texto||"";
+  var pv=function(){cam.querySelector("#ePv").innerHTML=sermaoHTML(parse(tx.value),"pv")};pv();
+  var campos=function(){return ["#eN","#eT","#eB","#eSe","#eD","#eC"].map(function(i){return cam.querySelector(i).value}).join("|")+"|"+tx.value};inicial=campos();
+  var t=null;tx.oninput=function(){clearTimeout(t);t=setTimeout(pv,200)};
+  var inserir=function(txt){var p=tx.selectionStart,e2=tx.selectionEnd;
+    if(txt==="**"||txt==="=="){var sel=tx.value.slice(p,e2)||"texto";tx.setRangeText(txt+sel+txt,p,e2,"select")}
+    else{if(txt.charAt(0)==="\n"&&(p===0||tx.value.charAt(p-1)==="\n"))txt=txt.slice(1);tx.setRangeText(txt,p,e2,"end")}
+    tx.focus();pv()};
+  cam.querySelector(".ins").addEventListener("click",function(e){var b=e.target.closest("[data-n]");if(!b)return;var x=INS[+b.dataset.n];
+    if(x[2]===null){abrirBiblia({inserir:inserir});return}inserir(x[2])});
+  cam.querySelector("#eBib").onclick=function(){var sel=tx.value.slice(tx.selectionStart,tx.selectionEnd).trim();abrirBiblia({ref:sel||undefined,inserir:inserir})};
+  cam.querySelector("#eVer").onclick=function(){var eb=cam.querySelector("#eBody");eb.classList.toggle("ver");this.textContent=eb.classList.contains("ver")?"Voltar a escrever":"Ver como fica";pv()};
+  var fechar=function(){edAberto=false;fecharGaveta();cam.remove();document.removeEventListener("keydown",atalho)};
+  var x=cam.querySelector("#eX");
+  x.onclick=function(){if(campos()!==inicial&&!x.classList.contains("arm")){x.classList.add("arm");x.textContent="Descartar alterações?";setTimeout(function(){x.classList.remove("arm");x.textContent="Cancelar"},4000);return}fechar()};
+  var salvar=function(){
+    s.num=cam.querySelector("#eN").value.trim()||String(proxNum());s.titulo=cam.querySelector("#eT").value.trim()||"Sem título";
+    s.base=cam.querySelector("#eB").value.trim();s.serie=cam.querySelector("#eSe").value.trim();s.data=cam.querySelector("#eD").value;s.culto=cam.querySelector("#eC").value.trim();s.texto=tx.value;
+    if(novo)db.sermoes.push(s);save();fechar();abrir(s.id);$("#app").classList.add("reading");toast("Pregação salva")};
+  cam.querySelector("#eS").onclick=salvar;
+  var del=cam.querySelector("#eDel");
+  if(del)del.onclick=function(){if(!del.classList.contains("arm")){del.classList.add("arm");del.textContent="Confirmar exclusão";setTimeout(function(){del.classList.remove("arm");del.textContent="Excluir"},4000);return}
+    var idx=db.sermoes.indexOf(s),copia=JSON.parse(JSON.stringify(s));db.sermoes.splice(idx,1);save();fechar();
+    E.atual=(ordenados()[0]||{}).id||null;renderList();renderReader();$("#app").classList.remove("reading");
+    toast("Pregação excluída","Desfazer",function(){db.sermoes.push(copia);save();abrir(copia.id)},6000)};
+  function atalho(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();salvar()}}
+  document.addEventListener("keydown",atalho);
+  if(novo)setTimeout(function(){cam.querySelector("#eT").focus()},30);
+}
+$("#bEditar").onclick=function(){editor(false)};$("#bNovo").onclick=function(){editor(true)};
+
+/* ================= Modo púlpito ================= */
+var P=null;
+function pulpito(){
+  var s=byId(E.atual);if(!s)return;var secs=parse(s.texto);if(!totalBlocos(secs)){toast("A pregação está vazia. Escreva o esboço primeiro.");return}
+  var pr=prog(s.id);if(pr.pos==null)pr.pos=0;
+  P={s:s,secs:secs,alvo:minTotal(secs)*60,t:0,st:secs.map(function(_,i){return 0}),run:false,tick:null,roll:null,lock:null};
+  var cam=document.createElement("div");cam.id="pulCam";document.body.appendChild(cam);
+  cam.innerHTML='<div class="pulpit" role="dialog" aria-label="Modo púlpito">'+
+    '<div class="ptop"><button class="btn" id="pX">Sair</button><div class="pt">'+esc(s.titulo)+' <span class="small">· '+esc(s.base)+'</span></div>'+
+      '<span class="secclock" id="pSec"></span><div class="clock" id="pClock"><span id="pT">0:00</span>'+(P.alvo?'<small>/ '+fmt(P.alvo)+'</small>':"")+'</div>'+
+      '<button class="btn pri" id="pPlay">Iniciar cronômetro</button></div>'+
+    '<div class="pbar"><div class="bar" style="margin:0;border-radius:0;height:4px"><i id="pBar2"></i></div></div>'+
+    '<nav class="prail" aria-label="Roteiro"><p class="lbl" style="margin:4px 8px 8px">Roteiro</p><ul class="ol" id="pMapa"></ul>'+
+      '<div style="padding:10px 8px"><div class="bar"><i id="pBar"></i></div><div class="small" id="pInfo"></div></div></nav>'+
+    '<div class="pmain" id="pMain"><div class="inner'+(db.cfg.marcas?"":" nomk")+'" id="pTxt">'+sermaoHTML(secs,"psec")+'</div></div>'+
+    '<div class="pbot">'+
+      '<div class="grp"><button id="pAnt">‹ Anterior</button></div>'+
+      '<button class="big" id="pProx">Próximo ponto ›</button>'+
+      '<div class="grp"><button id="pRm" aria-label="Mais devagar">−</button><span class="val" id="pV"></span><button id="pRp" aria-label="Mais rápido">+</button><button id="pRoll">▶ Rolar</button></div>'+
+      '<div class="grp"><button id="pFm" aria-label="Diminuir letra">A−</button><button id="pFp" aria-label="Aumentar letra">A+</button></div>'+
+      '<div class="hint">Espaço ou passador de slides: próximo ponto · ← →: seção · R: rolar · T: cronômetro · Toque num parágrafo para marcar onde está · Toque numa referência para mostrar o versículo grande</div>'+
+    '</div></div>';
+  document.body.style.overflow="hidden";
+  var q=function(id){return cam.querySelector(id)};
+  q("#pTxt").style.setProperty("--fs",db.cfg.pfs+"px");q("#pV").textContent="Vel. "+db.cfg.vel;
+  wake();
+  q("#pX").onclick=sairPulpito;q("#pPlay").onclick=cronometro;
+  q("#pProx").onclick=function(){mover(1)};q("#pAnt").onclick=function(){mover(-1)};
+  q("#pRm").onclick=function(){db.cfg.vel=Math.max(1,db.cfg.vel-1);q("#pV").textContent="Vel. "+db.cfg.vel;salvarLocal()};
+  q("#pRp").onclick=function(){db.cfg.vel=Math.min(10,db.cfg.vel+1);q("#pV").textContent="Vel. "+db.cfg.vel;salvarLocal()};
+  q("#pRoll").onclick=rolar;
+  q("#pFm").onclick=function(){db.cfg.pfs=Math.max(18,db.cfg.pfs-2);q("#pTxt").style.setProperty("--fs",db.cfg.pfs+"px");salvarLocal()};
+  q("#pFp").onclick=function(){db.cfg.pfs=Math.min(56,db.cfg.pfs+2);q("#pTxt").style.setProperty("--fs",db.cfg.pfs+"px");salvarLocal()};
+  q("#pTxt").addEventListener("click",function(e){var r=e.target.closest(".ref");if(r){versoGrande(r.dataset.ref);return}
+    var b=e.target.closest(".b");if(b){prog(s.id).pos=+b.dataset.i;atualizaP(false)}});
+  q("#pMain").addEventListener("pointerdown",function(){if(P&&P.roll)rolar()});
+  q("#pMapa").addEventListener("click",function(e){var b=e.target.closest("[data-sec]");if(!b)return;var sc=P.secs[+b.dataset.sec];if(sc.blocos[0]){prog(s.id).pos=sc.blocos[0].i;atualizaP(true)}});
+  document.addEventListener("keydown",teclas);
+  atualizaP(true);
+}
+function atualizaP(rolarAte){
+  if(!P)return;var cam=document.getElementById("pulCam"),q=function(id){return cam.querySelector(id)};
+  var pos=prog(P.s.id).pos,cs=secDe(P.secs,pos),tot=totalBlocos(P.secs);
+  posicao(q("#pTxt"),P.s.id);salvarLocal();
+  q("#pMapa").innerHTML=P.secs.map(function(x,i){var over=x.min&&P.st[i]>x.min*60;
+    return '<li><button data-sec="'+i+'" class="'+(i<cs?"done":i===cs?"cur":"")+(over?" over":"")+'"><span class="st"></span><span class="nm">'+esc(x.titulo)+'</span><span class="mm">'+(P.st[i]?fmt(P.st[i]):"")+(x.min?" / "+x.min+"′":"")+'</span></button></li>'}).join("");
+  var pct=Math.round((pos+1)/tot*100)+"%";q("#pBar").style.width=pct;q("#pBar2").style.width=pct;
+  var prox=P.secs[cs+1];q("#pInfo").textContent=prox?"Depois: "+prox.titulo:"Última seção";
+  var sm=(P.secs[cs]||{}).min*60||0,sc=q("#pSec");sc.textContent=fmt(P.st[cs]||0)+(sm?" / "+fmt(sm):"")+(P.secs[cs]?" · "+P.secs[cs].titulo:"");sc.title=sc.textContent;sc.classList.toggle("over",!!(sm&&P.st[cs]>sm));
+  var c=q("#pClock");c.classList.toggle("warn",!!(P.alvo&&P.t>P.alvo*.85&&P.t<=P.alvo));c.classList.toggle("over",!!(P.alvo&&P.t>P.alvo));q("#pT").textContent=fmt(P.t);
+  if(rolarAte){var el=q('#pTxt .b[data-i="'+pos+'"]');if(el)el.scrollIntoView({behavior:"smooth",block:"center"})}
+}
+function mover(d){var tot=totalBlocos(P.secs),p=prog(P.s.id);p.pos=Math.min(tot-1,Math.max(0,(p.pos||0)+d));atualizaP(true)}
+function moverSec(d){var cs=secDe(P.secs,prog(P.s.id).pos),n=P.secs[Math.min(P.secs.length-1,Math.max(0,cs+d))];if(n&&n.blocos[0]){prog(P.s.id).pos=n.blocos[0].i;atualizaP(true)}}
+function cronometro(){P.run=!P.run;document.querySelector("#pPlay").textContent=P.run?"Pausar":"Continuar";clearInterval(P.tick);
+  if(P.run)P.tick=setInterval(function(){P.t++;var cs=secDe(P.secs,prog(P.s.id).pos);if(cs>=0)P.st[cs]++;atualizaP(false)},1000)}
+function rolar(){var b=document.querySelector("#pRoll"),m=document.querySelector("#pMain");
+  if(P.roll){cancelAnimationFrame(P.roll);P.roll=null;b.textContent="▶ Rolar";return}
+  b.textContent="❚❚ Pausar";var acc=0,ult=null;
+  var f=function(ts){if(ult!==null){acc+=(ts-ult)/1000*(6+db.cfg.vel*db.cfg.vel*1.2);var n=Math.floor(acc);if(n){m.scrollTop+=n;acc-=n}}ult=ts;
+    if(m.scrollTop+m.clientHeight>=m.scrollHeight-2){P.roll=null;b.textContent="▶ Rolar";return}P.roll=requestAnimationFrame(f)};
+  P.roll=requestAnimationFrame(f)}
+function teclas(e){
+  if(!P)return;var ov=document.querySelector(".verse-ov");
+  if(e.key==="Escape"){if(ov)ov.remove();else sairPulpito();return}
+  if(ov){if(e.key===" "||e.key==="Enter"){e.preventDefault();ov.remove()}return}
+  var k=e.key;
+  if(k===" "||k==="PageDown"||k==="ArrowDown"){e.preventDefault();mover(1)}
+  else if(k==="PageUp"||k==="ArrowUp"){e.preventDefault();mover(-1)}
+  else if(k==="ArrowRight")moverSec(1);else if(k==="ArrowLeft")moverSec(-1);
+  else if(k==="r"||k==="R")rolar();else if(k==="t"||k==="T")cronometro();
+  else if(k==="+"||k==="=")document.querySelector("#pFp").click();else if(k==="-")document.querySelector("#pFm").click();
+}
+function sairPulpito(){
+  if(!P)return;var s=P.s,t=P.t;clearInterval(P.tick);if(P.roll)cancelAnimationFrame(P.roll);
+  prog(s.id).tempos=P.st.slice();solta();document.removeEventListener("keydown",teclas);P=null;
+  var c=document.getElementById("pulCam");if(c)c.remove();document.body.style.overflow="";salvarLocal();renderReader();renderList();
+  if(t>=120)toast("Pregou por "+Math.round(t/60)+" min. Registrar no histórico?","Registrar",function(){(s.historico=s.historico||[]).push({data:hojeISO(),local:s.culto||"",min:Math.round(t/60)});save();renderReader()},9000);
+}
+var lock=null;
+function wake(){try{if(navigator.wakeLock&&!lock&&document.visibilityState==="visible")navigator.wakeLock.request("screen").then(function(l){lock=l;l.addEventListener("release",function(){lock=null})}).catch(function(){})}catch(e){}}
+function solta(){try{if(lock)lock.release()}catch(e){}lock=null}
+document.addEventListener("visibilitychange",function(){if(P&&document.visibilityState==="visible")wake()});
+$("#bPulpito").onclick=pulpito;
+
+/* ================= Backup ================= */
+function bkJSON(){return JSON.stringify({app:"pulpito",versao:1,exportado:new Date().toISOString(),sermoes:db.sermoes},null,1)}
+function closeBk(){$("#ovBk").hidden=true}
+$("#bBackup").onclick=function(){$("#bkInfo").textContent=db.sermoes.length+" pregaç"+(db.sermoes.length===1?"ão":"ões")+" neste aparelho.";$("#ovBk").hidden=false};
+$("#bkFechar").onclick=closeBk;$("#ovBk").addEventListener("click",function(e){if(e.target===this)closeBk()});
+$("#bkBaixar").onclick=function(){
+  try{var blob=new Blob([bkJSON()],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);
+    a.download="pulpito-backup-"+hojeISO()+".json";document.body.appendChild(a);a.click();a.remove();
+    setTimeout(function(){URL.revokeObjectURL(a.href)},2000);toast("Backup gerado. Se não baixar, use “Copiar texto”.")}catch(e){toast("Use “Copiar texto” neste aparelho.")}};
+$("#bkCopiar").onclick=function(){var txt=bkJSON(),ta=$("#bkTxt");
+  var fb=function(){ta.value=txt;ta.focus();ta.select();toast("Texto selecionado. Copie e guarde em local seguro.")};
+  try{navigator.clipboard.writeText(txt).then(function(){toast("Backup copiado")},fb)}catch(e){fb()}};
+function importar(txt){
+  var d;try{d=JSON.parse(txt)}catch(e){toast("Esse texto não é um backup válido.");return}
+  var arr=Array.isArray(d)?d:(d&&d.sermoes);if(!Array.isArray(arr)){toast("Nenhuma pregação encontrada no backup.");return}
+  var novos=0,atual=0;
+  arr.forEach(function(x){if(!x||typeof x!=="object"||(!x.titulo&&!x.texto))return;var o={};CAMPOS.forEach(function(k){if(x[k]!==undefined)o[k]=x[k]});
+    var s=x.id&&byId(x.id);if(s){Object.assign(s,o);atual++}else{db.sermoes.push(Object.assign({id:x.id||uid(),num:proxNum(),fav:false,historico:[],texto:""},o));novos++}});
+  save();renderList();if(!byId(E.atual))E.atual=(ordenados()[0]||{}).id||null;renderReader();closeBk();$("#bkTxt").value="";
+  toast(novos+" nova"+(novos===1?"":"s")+", "+atual+" atualizada"+(atual===1?"":"s"));
+}
+$("#bkImport").onclick=function(){var t=$("#bkTxt").value.trim();if(!t){toast("Cole o texto do backup primeiro.");return}importar(t)};
+$("#bkFile").onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){importar(String(r.result))};r.readAsText(f);this.value=""};
+
+/* ================= Sincronização (Supabase, mesmo projeto do Hinário) ================= */
+var TABELA="pulpito_itens",sb=null,conta=null,sincronizando=false,deNovo=false,timerSync=null,estado="off",ultimoErro="";
+function cfg(){return window.PULPITO_CONFIG||{}}
+function cfgOk(){var c=cfg();return !!(c.supabaseUrl&&c.supabaseAnonKey&&!/COLE_AQUI/.test(c.supabaseUrl+c.supabaseAnonKey)&&window.supabase&&window.supabase.createClient)}
+function nPend(){return Object.keys(db.meta.pend).length}
+function setEstado(e){estado=e;var b=$("#bNuvem");b.dataset.st=e;var n=nPend();
+  $("#nvTxt").textContent={semcfg:"Offline",sair:"Entrar",ok:"Sincronizado",sync:"Sincronizando…",offline:"Offline"+(n?" ("+n+")":""),erro:"Erro ao sincronizar"}[e]||"Entrar";
+  b.title=$("#nvTxt").textContent;if(!$("#ovNv").hidden)renderConta()}
+function iniciarNuvem(){
+  if(!cfgOk()){setEstado("semcfg");return}
+  try{sb=window.supabase.createClient(cfg().supabaseUrl,cfg().supabaseAnonKey,{auth:{persistSession:true,autoRefreshToken:true,storageKey:"pulpito.auth"}})}catch(e){setEstado("semcfg");return}
+  sb.auth.getSession().then(function(r){conta=r.data&&r.data.session?r.data.session.user:null;atualizaEstado();if(conta)sincronizar()}).catch(function(){atualizaEstado()});
+  sb.auth.onAuthStateChange(function(ev,ses){var antes=conta&&conta.id;conta=ses?ses.user:null;atualizaEstado();if(conta&&conta.id!==antes)sincronizar()});
+}
+function atualizaEstado(){if(!sb)return setEstado("semcfg");if(!conta)return setEstado("sair");if(!navigator.onLine)return setEstado("offline");setEstado(nPend()?"offline":"ok")}
+function agendarSync(){if(!conta)return;clearTimeout(timerSync);if(!navigator.onLine){setEstado("offline");return}timerSync=setTimeout(sincronizar,1500)}
+async function sincronizar(){
+  if(!sb||!conta)return;if(!navigator.onLine){setEstado("offline");return}
+  if(sincronizando){deNovo=true;return}
+  sincronizando=true;setEstado("sync");
+  try{await baixar();await enviar();db.meta.ultimoSync=new Date().toISOString();persistir();ultimoErro="";setEstado(nPend()?"offline":"ok")}
+  catch(e){ultimoErro=(e&&e.message)||String(e);setEstado(navigator.onLine?"erro":"offline")}
+  finally{sincronizando=false;if(deNovo){deNovo=false;agendarSync()}}
+}
+async function baixar(){
+  var m=db.meta,desde=m.ultimoPull||"1970-01-01T00:00:00Z",mudou=false,mudouAtual=false;
+  for(var volta=0;volta<200;volta++){
+    var r=await sb.from(TABELA).select("id,dados,apagado,editado_em,sincronizado_em").gt("sincronizado_em",desde).order("sincronizado_em",{ascending:true}).limit(500);
+    if(r.error)throw r.error;
+    r.data.forEach(function(row){if(aplicarRemoto(row)){mudou=true;if(row.id===E.atual)mudouAtual=true}});
+    if(r.data.length)desde=r.data[r.data.length-1].sincronizado_em;
+    if(r.data.length<500)break;
+  }
+  m.ultimoPull=desde;
+  if(mudou){persistir();if(E.atual&&!byId(E.atual))E.atual=(ordenados()[0]||{}).id||null;renderList();if((mudouAtual||!E.atual)&&!P&&!edAberto)renderReader()}
+}
+function aplicarRemoto(row){
+  var m=db.meta,id=row.id,t=Date.parse(row.editado_em)||0,s=byId(id);
+  if(row.apagado){
+    if(s){if((s.atualizado||0)<=t){db.sermoes=db.sermoes.filter(function(x){return x.id!==id});delete m.visto[id];delete m.pend[id];return true}return false}
+    if(m.apagados[id]&&m.apagados[id]<=t){delete m.apagados[id];delete m.pend[id]}
+    return false}
+  if(!s){if(m.apagados[id]&&m.apagados[id]>t)return false;
+    var novo=Object.assign({id:id},row.dados||{},{atualizado:t});db.sermoes.push(novo);m.visto[id]=assinatura(novo);delete m.pend[id];delete m.apagados[id];return true}
+  if(t>(s.atualizado||0)){CAMPOS.forEach(function(k){delete s[k]});Object.assign(s,row.dados||{});s.atualizado=t;m.visto[id]=assinatura(s);delete m.pend[id];return true}
+  return false
+}
+async function enviar(){
+  var m=db.meta,ids=Object.keys(m.pend);if(!ids.length)return;
+  var iso=function(n){return new Date(n||Date.now()).toISOString()},foto={};
+  var linhas=ids.map(function(id){var s=byId(id);
+    if(s){foto[id]=assinatura(s);return {user_id:conta.id,id:id,dados:dadosDe(s),apagado:false,editado_em:iso(s.atualizado)}}
+    foto[id]="apagado";return {user_id:conta.id,id:id,dados:null,apagado:true,editado_em:iso(m.apagados[id])}});
+  for(var i=0;i<linhas.length;i+=200){var r=await sb.from(TABELA).upsert(linhas.slice(i,i+200),{onConflict:"user_id,id"});if(r.error)throw r.error}
+  ids.forEach(function(id){var agora=byId(id)?assinatura(byId(id)):"apagado";if(agora===foto[id]){delete m.pend[id];if(agora==="apagado")delete m.apagados[id]}});
+}
+function renderConta(){
+  $("#nvSemCfg").hidden=!!sb;$("#nvLogin").hidden=!sb||!!conta;$("#nvConta").hidden=!conta;
+  if(conta){$("#nvQuem").textContent=conta.email||"";
+    $("#nvQuando").textContent=db.meta.ultimoSync?new Date(db.meta.ultimoSync).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}):"ainda não";
+    var n=nPend();$("#nvPend").textContent=n?n+" alteração(ões) aguardando internet para enviar.":"Tudo enviado para a nuvem.";
+    var m2=$("#nvMsg2");m2.className="nv-msg"+(estado==="erro"?" err":"");
+    m2.textContent=estado==="erro"?"Não foi possível sincronizar: "+traduz(ultimoErro):estado==="sync"?"Sincronizando…":!navigator.onLine?"Sem internet. As pregações sincronizam quando a conexão voltar.":""}
+}
+function traduz(msg){msg=String(msg||"");
+  if(/Invalid login credentials/i.test(msg))return "E-mail ou senha incorretos.";
+  if(/Email not confirmed/i.test(msg))return "Confirme o seu e-mail pelo link que enviamos e depois toque em Entrar.";
+  if(/already registered|already exists/i.test(msg))return "Esse e-mail já tem conta. Toque em Entrar.";
+  if(/Password should be|at least 6/i.test(msg))return "A senha precisa ter pelo menos 6 caracteres.";
+  if(/rate limit|too many/i.test(msg))return "Muitas tentativas. Aguarde um minuto e tente de novo.";
+  if(/Failed to fetch|NetworkError|network/i.test(msg))return "Sem conexão com a internet.";
+  if(/relation .* does not exist|pulpito_itens|schema cache/i.test(msg))return "A tabela do Supabase ainda não foi criada (veja o LEIA-ME, passo 1).";
+  return msg}
+function msgLogin(t,err){var m=$("#nvMsg");m.textContent=t;m.className="nv-msg"+(err?" err":"")}
+$("#bNuvem").onclick=function(){msgLogin("");renderConta();$("#ovNv").hidden=false;if(sb&&!conta)setTimeout(function(){$("#nvEmail").focus()},30)};
+$("#nvFechar").onclick=function(){$("#ovNv").hidden=true};
+$("#ovNv").addEventListener("click",function(e){if(e.target===this)this.hidden=true});
+$("#nvLogin").addEventListener("submit",function(e){e.preventDefault();
+  var em=$("#nvEmail").value.trim(),se=$("#nvSenha").value;if(!em||!se){msgLogin("Preencha e-mail e senha.",true);return}
+  msgLogin("Entrando…");
+  sb.auth.signInWithPassword({email:em,password:se}).then(function(r){if(r.error){msgLogin(traduz(r.error.message),true);return}
+    db.meta.ultimoPull=null;persistir();$("#nvSenha").value="";msgLogin("");toast("Conectado. Sincronizando pregações…");renderConta()})
+  .catch(function(err){msgLogin(traduz(err&&err.message),true)})});
+$("#nvCriar").onclick=function(){
+  var em=$("#nvEmail").value.trim(),se=$("#nvSenha").value;if(!em||!se){msgLogin("Digite o e-mail e crie uma senha (mínimo 6 caracteres).",true);return}
+  msgLogin("Criando conta…");
+  sb.auth.signUp({email:em,password:se}).then(function(r){if(r.error){msgLogin(traduz(r.error.message),true);return}
+    if(r.data&&r.data.session){msgLogin("");toast("Conta criada. Sincronizando…");renderConta()}
+    else msgLogin("Conta criada. Abra o e-mail de confirmação, toque no link e depois volte aqui e toque em Entrar.")})
+  .catch(function(err){msgLogin(traduz(err&&err.message),true)})};
+$("#nvEsqueci").onclick=function(){
+  var em=$("#nvEmail").value.trim();if(!em){msgLogin("Digite o seu e-mail acima e toque de novo em Esqueci a senha.",true);$("#nvEmail").focus();return}
+  msgLogin("Enviando…");
+  sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname}).then(function(r){if(r.error){msgLogin(traduz(r.error.message),true);return}
+    msgLogin("Enviamos um link para "+em+". Se a senha for trocada pelo Hinário, ela vale aqui também.")})
+  .catch(function(err){msgLogin(traduz(err&&err.message),true)})};
+$("#nvAgora").onclick=function(){sincronizar().then(renderConta)};
+$("#nvSair").onclick=function(){var b=this;
+  if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent="Toque de novo para sair";setTimeout(function(){b.classList.remove("arm");b.textContent="Sair desta conta"},4000);return}
+  b.classList.remove("arm");b.textContent="Sair desta conta";
+  sb.auth.signOut().finally(function(){conta=null;db.meta.ultimoPull=null;persistir();atualizaEstado();renderConta();toast("Você saiu. As pregações continuam neste aparelho.")})};
+window.addEventListener("online",function(){atualizaEstado();sincronizar()});
+window.addEventListener("offline",atualizaEstado);
+document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")sincronizar()});
+setInterval(function(){if(document.visibilityState==="visible")sincronizar()},60000);
+
+/* ================= Tema e avisos ================= */
+var ICTEMA={auto:'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/>',claro:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',escuro:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>'};
+function aplicaTema(){var t=db.cfg.tema;if(t==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",t==="escuro"?"dark":"light");
+  var b=$("#bTema");b.innerHTML='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(ICTEMA[t]||ICTEMA.auto)+'</svg>';b.setAttribute("aria-label","Tema: "+t);b.title="Tema: "+t+" (toque para alternar)"}
+$("#bTema").onclick=function(){db.cfg.tema={auto:"claro",claro:"escuro",escuro:"auto"}[db.cfg.tema]||"auto";salvarLocal();aplicaTema()};
+var tt=null;
+function toast(m,acao,fn,ms){var el=document.querySelector(".toast");if(!el){el=document.createElement("div");el.className="toast";el.setAttribute("role","status");document.body.appendChild(el)}
+  el.textContent=m;
+  if(acao){var b=document.createElement("button");b.textContent=acao;b.onclick=function(){el.hidden=true;fn()};el.appendChild(b)}
+  el.hidden=false;clearTimeout(tt);tt=setTimeout(function(){el.hidden=true},ms||2600)}
+document.addEventListener("keydown",function(e){
+  if(e.key!=="Escape"||P)return;
+  if(document.querySelector(".verse-ov")){document.querySelector(".verse-ov").remove();return}
+  if(gaveta){fecharGaveta();return}
+  if(!$("#ovNv").hidden){$("#ovNv").hidden=true;return}if(!$("#ovBk").hidden){closeBk();return}
+});
+
+/* ================= Início ================= */
+load();aplicaTema();
+var ult=null;try{ult=localStorage.getItem(KEY+".ultimo")}catch(e){}
+E.atual=(ult&&byId(ult))?ult:(ordenados()[0]||{}).id||null;
+renderList();renderReader();
+if(window.innerWidth<=860&&!E.atual)$("#app").classList.remove("reading");else $("#app").classList.add("reading");
+carregaBiblia();iniciarNuvem();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0){
+  var tinhaSW=!!navigator.serviceWorker.controller,recarregou=false;
+  navigator.serviceWorker.addEventListener("controllerchange",function(){if(!tinhaSW||recarregou||P||edAberto)return;recarregou=true;location.reload()});
+  window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").then(function(r){
+    document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")r.update().catch(function(){})})}).catch(function(){})});
+}
+})();
+</script>
+</body>
+</html>
