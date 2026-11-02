@@ -12,8 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // App de pregações (PWA estático, sem build)
-    "pulpito/**",
   ]),
 ]);
 
