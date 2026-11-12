@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { CategoryWithProducts, Order, OrderItem, StoreSettings } from "@/lib/types";
 
 export async function getStoreSettings(): Promise<StoreSettings> {
@@ -63,7 +64,10 @@ export async function getMenu(): Promise<CategoryWithProducts[]> {
 export async function getOrderWithItems(
   orderId: string
 ): Promise<{ order: Order; items: OrderItem[] } | null> {
-  const supabase = await createClient();
+  // Usa a service_role key: o cliente acessa o pedido pelo link que recebeu
+  // (uuid aleatório, não listável), e a RLS pública não permite mais leitura
+  // de pedidos — então o servidor busca com privilégio elevado.
+  const supabase = createAdminClient();
 
   const { data: order, error: orderError } = await supabase
     .from("orders")
