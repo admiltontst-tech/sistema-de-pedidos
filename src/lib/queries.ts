@@ -61,6 +61,29 @@ export async function getMenu(): Promise<CategoryWithProducts[]> {
   return categories.sort((a, b) => a.sort_order - b.sort_order);
 }
 
+export async function getMenuForAdmin(): Promise<CategoryWithProducts[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("categories")
+    .select(
+      `
+      id, name, slug, sort_order,
+      products:products ( id, category_id, name, description, price_cents, image_url, badge, available, featured, sort_order, product_option_groups:product_option_groups(id,product_id,name,type,required,max_select,sort_order,product_options:product_options(id,group_id,label,price_delta_cents,sort_order)) )
+    `
+    )
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    throw new Error(`Falha ao carregar o cardápio: ${error.message}`);
+  }
+
+  const categories = (data ?? []) as unknown as CategoryWithProducts[];
+  for (const category of categories) {
+    category.products = (category.products ?? []).sort((a, b) => a.sort_order - b.sort_order);
+  }
+  return categories.sort((a, b) => a.sort_order - b.sort_order);
+}
+
 export async function getOrderWithItems(
   orderId: string
 ): Promise<{ order: Order; items: OrderItem[] } | null> {
