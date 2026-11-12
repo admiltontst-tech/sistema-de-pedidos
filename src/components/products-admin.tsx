@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   toggleProductAvailable,
   toggleProductFeatured,
@@ -9,6 +10,30 @@ import {
   deleteProduct,
 } from "@/app/admin/actions";
 import type { CategoryWithProducts, Product } from "@/lib/types";
+
+function Toggle({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      className={`text-xs font-semibold px-2.5 py-1.5 rounded-full border transition ${
+        checked
+          ? "bg-accent/10 border-accent text-accent-dark"
+          : "bg-surface border-border text-muted"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
 
 function PriceInput({ product }: { product: Product }) {
   const [value, setValue] = useState((product.price_cents / 100).toFixed(2));
@@ -106,36 +131,48 @@ export function ProductsAdmin({ categories }: { categories: CategoryWithProducts
     <div className="flex flex-col gap-6">
       {categories.map((category) => (
         <div key={category.id} className="bg-surface border border-border rounded-2xl p-5">
-          <h2 className="font-bold text-heading mb-3">{category.name}</h2>
+          <div className="flex items-center justify-between mb-3.5">
+            <h2 className="font-display font-bold text-heading text-base">{category.name}</h2>
+            <span className="text-muted text-xs font-semibold bg-chip px-2.5 py-1 rounded-full">
+              {category.products.length} {category.products.length === 1 ? "item" : "itens"}
+            </span>
+          </div>
           <div className="flex flex-col">
             {category.products.map((product) => (
               <div
                 key={product.id}
-                className="flex items-center gap-3 py-2.5 border-b border-border-soft last:border-b-0"
+                className="flex items-center gap-3 py-3 border-b border-border-soft last:border-b-0 flex-wrap"
               >
-                <span className="flex-1 text-sm text-foreground">{product.name}</span>
+                <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 bg-chip">
+                  {product.image_url && (
+                    <Image
+                      src={product.image_url}
+                      alt={product.name}
+                      width={36}
+                      height={36}
+                      className="object-cover w-full h-full"
+                    />
+                  )}
+                </div>
+                <span className="flex-1 min-w-[120px] text-sm font-medium text-foreground">
+                  {product.name}
+                </span>
                 <PriceInput product={product} />
-                <label className="flex items-center gap-1.5 text-xs text-muted">
-                  <input
-                    type="checkbox"
-                    defaultChecked={product.available}
-                    onChange={(e) => toggleProductAvailable(product.id, e.target.checked)}
-                  />
-                  Disponível
-                </label>
-                <label className="flex items-center gap-1.5 text-xs text-muted">
-                  <input
-                    type="checkbox"
-                    defaultChecked={product.featured}
-                    onChange={(e) => toggleProductFeatured(product.id, e.target.checked)}
-                  />
-                  Destaque
-                </label>
+                <Toggle
+                  checked={product.available}
+                  onChange={(v) => toggleProductAvailable(product.id, v)}
+                  label="Disponível"
+                />
+                <Toggle
+                  checked={product.featured}
+                  onChange={(v) => toggleProductFeatured(product.id, v)}
+                  label="Destaque"
+                />
                 <button
                   onClick={() => {
                     if (confirm(`Remover "${product.name}"?`)) deleteProduct(product.id);
                   }}
-                  className="text-[#B91C1C] text-xs font-semibold"
+                  className="text-[#B91C1C] text-xs font-semibold hover:underline"
                 >
                   Remover
                 </button>

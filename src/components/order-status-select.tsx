@@ -2,19 +2,14 @@
 
 import { useTransition } from "react";
 import { updateOrderStatus } from "@/app/admin/actions";
+import { STATUS_META } from "@/lib/order-status";
 import type { OrderStatus } from "@/lib/types";
 
-const OPTIONS: { value: OrderStatus; label: string }[] = [
-  { value: "recebido", label: "Recebido" },
-  { value: "preparando", label: "Preparando" },
-  { value: "pronto", label: "Pronto" },
-  { value: "saiu_para_entrega", label: "Saiu para entrega" },
-  { value: "entregue", label: "Entregue" },
-  { value: "cancelado", label: "Cancelado" },
-];
+const OPTIONS = Object.keys(STATUS_META) as OrderStatus[];
 
 export function OrderStatusSelect({ orderId, status }: { orderId: string; status: OrderStatus }) {
   const [isPending, startTransition] = useTransition();
+  const meta = STATUS_META[status];
 
   return (
     <select
@@ -26,11 +21,11 @@ export function OrderStatusSelect({ orderId, status }: { orderId: string; status
           updateOrderStatus(orderId, next);
         });
       }}
-      className="bg-chip border border-chip-border rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[#5A3E28] disabled:opacity-50"
+      className={`${meta.bg} ${meta.text} border-none rounded-full px-3 py-1.5 text-xs font-bold disabled:opacity-50 cursor-pointer appearance-none text-center`}
     >
-      {OPTIONS.map((o) => (
-        <option key={o.value} value={o.value}>
-          {o.label}
+      {OPTIONS.map((value) => (
+        <option key={value} value={value}>
+          {STATUS_META[value].label}
         </option>
       ))}
     </select>

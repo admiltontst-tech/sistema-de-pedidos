@@ -1,25 +1,35 @@
-import Link from "next/link";
+import Image from "next/image";
 import { AdminLogoutButton } from "@/components/admin-logout-button";
+import { AdminNavLinks } from "@/components/admin-nav-links";
+import { getStoreSettings } from "@/lib/queries";
 
-export default function AdminLayout({ children }: LayoutProps<"/admin">) {
+export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
+  const settings = await getStoreSettings();
+
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b border-border-soft bg-surface">
-        <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <span className="font-display font-bold text-heading">Admin</span>
-            <nav className="flex gap-5 text-sm font-semibold text-muted">
-              <Link href="/admin" className="hover:text-foreground">
-                Pedidos
-              </Link>
-              <Link href="/admin/produtos" className="hover:text-foreground">
-                Cardápio
-              </Link>
-              <Link href="/admin/configuracoes" className="hover:text-foreground">
-                Configurações
-              </Link>
-            </nav>
+        <div className="max-w-5xl mx-auto px-5 py-3.5 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 border border-chip-border bg-chip">
+              {settings.logo_url && (
+                <Image
+                  src={settings.logo_url}
+                  alt={settings.name}
+                  width={36}
+                  height={36}
+                  className="object-cover w-full h-full"
+                />
+              )}
+            </div>
+            <div>
+              <div className="font-display font-bold text-heading text-sm leading-tight">
+                {settings.name}
+              </div>
+              <div className="text-muted text-[11px] font-medium leading-tight">Painel administrativo</div>
+            </div>
           </div>
+          <AdminNavLinks />
           <AdminLogoutButton />
         </div>
       </div>
