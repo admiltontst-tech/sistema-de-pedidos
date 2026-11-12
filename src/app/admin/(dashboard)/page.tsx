@@ -1,4 +1,5 @@
-import { ClipboardList, Wallet, Flame, Inbox } from "lucide-react";
+import Link from "next/link";
+import { ClipboardList, Wallet, Flame, Inbox, Printer } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import type { Order } from "@/lib/types";
 import { OrderStatusSelect } from "@/components/order-status-select";
@@ -87,6 +88,14 @@ export default async function AdminOrdersPage() {
                 {formatMoney(order.total_cents)}
               </div>
               <OrderStatusSelect orderId={order.id} status={order.status} />
+              <Link
+                href={`/admin/pedidos/${order.id}/imprimir`}
+                target="_blank"
+                aria-label="Imprimir pedido"
+                className="w-8 h-8 rounded-full bg-chip flex items-center justify-center text-accent-dark hover:brightness-95 transition flex-shrink-0"
+              >
+                <Printer size={15} />
+              </Link>
             </div>
           ))}
         </div>
