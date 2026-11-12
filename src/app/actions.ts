@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { CartItem, DeliveryType, PaymentMethod } from "@/lib/types";
 
 type CreateOrderInput = {
@@ -26,7 +26,10 @@ export async function createOrder(input: CreateOrderInput) {
     throw new Error("O carrinho está vazio.");
   }
 
-  const supabase = await createClient();
+  // Insere com privilégio de servidor: esta Server Action já validou os dados
+  // acima, e a leitura de volta do pedido (necessária para pegar o id) exige
+  // mais acesso do que a RLS pública concede a um cliente anônimo.
+  const supabase = createAdminClient();
 
   const { data: order, error: orderError } = await supabase
     .from("orders")
