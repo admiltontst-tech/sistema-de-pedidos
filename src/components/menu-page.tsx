@@ -684,19 +684,35 @@ export function MenuPage({
             {massasCategory.products.map((p) => (
               <div
                 key={p.id}
-                className="bg-gradient-to-r from-chip to-[#FFF3E8] border border-border rounded-2xl p-5 flex items-center gap-5"
+                className="relative overflow-hidden border border-border rounded-2xl bg-cover bg-center"
+                style={
+                  settings.cover_url
+                    ? { backgroundImage: `url(${settings.cover_url})`, backgroundPosition: "center 70%" }
+                    : undefined
+                }
               >
-                <Thumb product={p} size={88} />
-                <div className="flex-1">
-                  <div className="font-bold text-heading text-[17px]">{p.name}</div>
-                  <div className="text-muted text-sm mt-1">{p.description}</div>
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, rgba(253,238,221,.97) 0%, rgba(253,238,221,.9) 45%, rgba(253,238,221,.5) 75%, rgba(253,238,221,.1) 100%)",
+                  }}
+                />
+                <div className="relative z-10 p-5 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
+                  <div className="flex items-center gap-4">
+                    <Thumb product={p} size={88} />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-heading text-[17px]">{p.name}</div>
+                      <div className="text-muted text-sm mt-1">{p.description}</div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setBuilderProduct(p)}
+                    className="bg-accent text-accent-ink font-bold text-sm px-5 py-3 rounded-lg hover:brightness-95 transition whitespace-nowrap w-full sm:w-auto sm:flex-shrink-0"
+                  >
+                    Montar meu prato
+                  </button>
                 </div>
-                <button
-                  onClick={() => setBuilderProduct(p)}
-                  className="bg-accent text-accent-ink font-bold text-sm px-5 py-3 rounded-lg hover:brightness-95 transition whitespace-nowrap"
-                >
-                  Montar meu prato
-                </button>
               </div>
             ))}
           </section>
