@@ -631,27 +631,31 @@ export function MenuPage({
       </div>
 
       {/* CATEGORY NAV */}
-      <div className="sticky top-[66px] z-20 bg-background border-b border-border-soft py-3">
-        <div className="max-w-[1180px] mx-auto px-5 flex gap-2.5 overflow-x-auto [&::-webkit-scrollbar]:hidden">
-          {featured.length > 0 && (
-            <a href="#destaques" className="bg-[#FDE6D3] text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full whitespace-nowrap">
-              Destaques
-            </a>
-          )}
-          {visibleCategories.map((c) => (
-            <a
-              key={c.id}
-              href={`#${c.slug}`}
-              className="bg-chip border border-chip-border text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full whitespace-nowrap"
-            >
-              {c.name}
-            </a>
-          ))}
-          {massasCategory && massasCategory.products.length > 0 && (
-            <a href="#massas" className="bg-chip border border-chip-border text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full whitespace-nowrap">
-              Monte seu Macarrão
-            </a>
-          )}
+      <div className="sticky top-[66px] z-20 bg-background border-b border-border-soft py-3 relative">
+        <div className="max-w-[1180px] mx-auto relative">
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-10 bg-gradient-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 z-10 bg-gradient-to-l from-background to-transparent" />
+          <div className="px-5 flex gap-2.5 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+            {featured.length > 0 && (
+              <a href="#destaques" className="bg-[#FDE6D3] text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full whitespace-nowrap">
+                Destaques
+              </a>
+            )}
+            {visibleCategories.map((c) => (
+              <a
+                key={c.id}
+                href={`#${c.slug}`}
+                className="bg-chip border border-chip-border text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full whitespace-nowrap"
+              >
+                {c.name}
+              </a>
+            ))}
+            {massasCategory && massasCategory.products.length > 0 && (
+              <a href="#massas" className="bg-chip border border-chip-border text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full whitespace-nowrap">
+                Monte seu Macarrão
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
