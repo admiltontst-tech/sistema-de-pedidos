@@ -555,23 +555,25 @@ export function MenuPage({
       {/* TOP BAR */}
       <div className="sticky top-0 z-30 bg-background/90 backdrop-blur-sm border-b border-border-soft">
         <div className="max-w-[1180px] mx-auto px-5 py-3 flex items-center justify-between gap-3.5">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <div className="w-[42px] h-[42px] rounded-xl overflow-hidden flex-shrink-0 border border-chip-border">
               {settings.logo_url ? (
                 <Image src={settings.logo_url} alt={settings.name} width={42} height={42} className="object-cover w-full h-full" />
               ) : null}
             </div>
-            <div>
-              <h1 className="font-display font-bold text-heading text-lg leading-tight">
+            <div className="min-w-0">
+              <h1 className="font-display font-bold text-heading text-lg leading-tight truncate whitespace-nowrap">
                 {settings.name.split(" ").slice(0, -2).join(" ")}{" "}
                 <span className="text-accent">{settings.name.split(" ").slice(-2).join(" ")}</span>
               </h1>
-              <div className="text-muted text-[11px] font-medium">{settings.tagline}</div>
+              <div className="text-muted text-[11px] font-medium truncate whitespace-nowrap">
+                {settings.tagline}
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 flex-shrink-0">
             <div
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
+              className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
                 settings.is_open ? "bg-[#1F9D55]/15" : "bg-[#D62828]/15"
               }`}
             >
@@ -581,6 +583,16 @@ export function MenuPage({
               <span className={`text-xs font-bold ${settings.is_open ? "text-[#15803D]" : "text-[#B91C1C]"}`}>
                 {settings.is_open ? "Aberto agora" : "Fechado"}
               </span>
+            </div>
+            <div
+              className={`sm:hidden w-7 h-7 rounded-full flex items-center justify-center ${
+                settings.is_open ? "bg-[#1F9D55]/15" : "bg-[#D62828]/15"
+              }`}
+              aria-label={settings.is_open ? "Aberto agora" : "Fechado"}
+            >
+              <span
+                className={`w-[7px] h-[7px] rounded-full ${settings.is_open ? "bg-[#2FBE6F]" : "bg-[#FF5A5A]"}`}
+              />
             </div>
             <button
               aria-label="Ver carrinho"
