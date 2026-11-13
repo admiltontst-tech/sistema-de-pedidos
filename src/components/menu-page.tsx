@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Bike,
   Megaphone,
+  Flame,
 } from "lucide-react";
 import { useCartStore, cartTotalCents, cartCount } from "@/lib/cart-store";
 import { formatMoney } from "@/lib/money";
@@ -611,6 +612,21 @@ export function MenuPage({
           </div>
         </div>
       </div>
+
+      {/* PROMOÇÃO */}
+      {settings.promo_active && settings.promo_title && (
+        <div className="bg-gradient-to-r from-accent to-[#D62828] px-5 py-3">
+          <div className="max-w-[1180px] mx-auto flex items-center gap-2.5 flex-wrap">
+            <Flame size={19} className="text-white flex-shrink-0" />
+            <span className="font-display font-bold text-white text-[15px]">
+              {settings.promo_title}
+            </span>
+            {settings.promo_description && (
+              <span className="text-white/90 text-sm">{settings.promo_description}</span>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* HERO */}
       <div className="border-b border-border-soft">

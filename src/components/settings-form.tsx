@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Flame } from "lucide-react";
 import { updateStoreSettings } from "@/app/admin/actions";
 import type { StoreSettings } from "@/lib/types";
 
@@ -17,6 +18,9 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
     delivery_time_estimate: settings.delivery_time_estimate ?? "",
     welcome_message: settings.welcome_message ?? "",
     instagram_handle: settings.instagram_handle ?? "",
+    promo_active: settings.promo_active,
+    promo_title: settings.promo_title ?? "",
+    promo_description: settings.promo_description ?? "",
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -37,6 +41,9 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
       delivery_time_estimate: form.delivery_time_estimate,
       welcome_message: form.welcome_message,
       instagram_handle: form.instagram_handle,
+      promo_active: form.promo_active,
+      promo_title: form.promo_title,
+      promo_description: form.promo_description,
     });
     setSaving(false);
     setSaved(true);
@@ -57,6 +64,45 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
         <span>Loja {form.is_open ? "aberta" : "fechada"} para pedidos</span>
         <span className="text-xs underline">Clique para alternar</span>
       </button>
+
+      <div className="border-[1.5px] border-accent/40 bg-accent/5 rounded-xl p-4 flex flex-col gap-3">
+        <button
+          type="button"
+          onClick={() => setForm((f) => ({ ...f, promo_active: !f.promo_active }))}
+          className={`flex items-center justify-between px-3 py-2.5 rounded-lg font-bold text-sm transition ${
+            form.promo_active
+              ? "bg-accent text-accent-ink"
+              : "bg-chip text-muted border border-chip-border"
+          }`}
+        >
+          <span className="flex items-center gap-1.5">
+            <Flame size={15} /> Promoção {form.promo_active ? "ativa no site" : "desativada"}
+          </span>
+          <span className="text-xs underline">Clique para alternar</span>
+        </button>
+        <label className="text-[12.5px] font-bold text-muted uppercase">
+          Título da promoção
+          <input
+            value={form.promo_title}
+            onChange={(e) => setForm((f) => ({ ...f, promo_title: e.target.value }))}
+            placeholder="Ex: Quarta do Baião!"
+            className="w-full mt-1.5 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-foreground"
+          />
+        </label>
+        <label className="text-[12.5px] font-bold text-muted uppercase">
+          Regras / descrição
+          <textarea
+            value={form.promo_description}
+            onChange={(e) => setForm((f) => ({ ...f, promo_description: e.target.value }))}
+            rows={3}
+            placeholder="Ex: Compre 2 espetinhos e ganhe um baião P! Só hoje, até durar o estoque."
+            className="w-full mt-1.5 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-foreground resize-none"
+          />
+        </label>
+        <p className="text-muted text-xs">
+          Quando ativa, aparece em destaque no topo do site. Desative quando a promoção acabar.
+        </p>
+      </div>
 
       <label className="text-[12.5px] font-bold text-muted uppercase">
         Nome da loja

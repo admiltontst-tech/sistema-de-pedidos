@@ -23,6 +23,9 @@ export async function updateStoreSettings(data: {
   delivery_time_estimate: string;
   welcome_message: string;
   instagram_handle: string;
+  promo_active: boolean;
+  promo_title: string;
+  promo_description: string;
 }) {
   const supabase = await createClient();
   const { error } = await supabase.from("store_settings").update(data).eq("id", 1);

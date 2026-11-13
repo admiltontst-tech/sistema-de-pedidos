@@ -15,19 +15,24 @@ function Toggle({
   checked,
   onChange,
   label,
+  tone = "accent",
 }: {
   checked: boolean;
   onChange: (value: boolean) => void;
   label: string;
+  tone?: "accent" | "green";
 }) {
+  const checkedClass =
+    tone === "green"
+      ? "bg-[#1F9D55]/10 border-[#1F9D55] text-[#15803D]"
+      : "bg-accent/10 border-accent text-accent-dark";
+
   return (
     <button
       type="button"
       onClick={() => onChange(!checked)}
       className={`text-xs font-semibold px-2.5 py-1.5 rounded-full border transition ${
-        checked
-          ? "bg-accent/10 border-accent text-accent-dark"
-          : "bg-surface border-border text-muted"
+        checked ? checkedClass : "bg-surface border-border text-muted"
       }`}
     >
       {label}
@@ -162,6 +167,7 @@ export function ProductsAdmin({ categories }: { categories: CategoryWithProducts
                   checked={product.available}
                   onChange={(v) => toggleProductAvailable(product.id, v)}
                   label="Disponível"
+                  tone="green"
                 />
                 <Toggle
                   checked={product.featured}

@@ -7,7 +7,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const settings = await getStoreSettings();
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background">
       <div className="border-b border-border-soft bg-surface">
         <div className="max-w-5xl mx-auto px-5 pt-3.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
