@@ -175,10 +175,15 @@ export default function AdminHelpPage() {
 
         <Section icon={ShieldAlert} title="Acesso e segurança">
           <ul>
-            <li>Nunca compartilhe seu e-mail e senha do painel com outras pessoas.</li>
+            <li>Nunca compartilhe seu e-mail e senha do painel com outras pessoas (exceto o login separado do garçom, feito em Configurações).</li>
             <li>Clique em <strong>Sair</strong> (canto superior direito) ao terminar de usar um computador compartilhado.</li>
             <li>Problemas de acesso ou dúvidas técnicas: fale com quem desenvolveu o sistema.</li>
           </ul>
+          <p className="text-muted text-xs">
+            <strong className="text-heading">Trocar o e-mail de login do ADM:</strong> isso é feito
+            direto no Supabase (Authentication → Users → clique no usuário → edite o e-mail). Quem
+            desenvolveu o sistema pode te acompanhar nesse passo.
+          </p>
         </Section>
       </div>
     </div>

@@ -11,7 +11,7 @@ const ADMIN_LINKS = [
   { href: "/admin/mesas", label: "Mesas", icon: LayoutGrid },
   { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
   { href: "/admin/privacidade", label: "Privacidade", icon: ShieldCheck },
-  { href: "/admin/ajuda", label: "Ajuda", icon: HelpCircle },
+  { href: "/admin/ajuda", label: "Como usar", icon: HelpCircle },
 ];
 
 const GARCOM_LINKS = [{ href: "/admin/mesas", label: "Mesas", icon: LayoutGrid }];
