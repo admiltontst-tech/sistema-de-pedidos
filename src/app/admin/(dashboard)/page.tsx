@@ -3,6 +3,7 @@ import { ClipboardList, Wallet, Flame, Inbox, Printer } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import type { Order } from "@/lib/types";
 import { OrderStatusSelect } from "@/components/order-status-select";
+import { OrdersRealtimeNotifier } from "@/components/orders-realtime-notifier";
 import { formatMoney } from "@/lib/money";
 import { OPEN_STATUSES } from "@/lib/order-status";
 
@@ -52,6 +53,7 @@ export default async function AdminOrdersPage() {
 
   return (
     <div>
+      <OrdersRealtimeNotifier />
       <h1 className="font-display text-xl text-heading mb-5">Pedidos</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-7">

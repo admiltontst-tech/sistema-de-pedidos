@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
+import { ImagePlus, Loader2 } from "lucide-react";
 import {
   toggleProductAvailable,
   toggleProductFeatured,
@@ -9,7 +10,18 @@ import {
   createProduct,
   deleteProduct,
 } from "@/app/admin/actions";
+import { createClient } from "@/lib/supabase/client";
 import type { CategoryWithProducts, Product } from "@/lib/types";
+
+async function uploadProductImage(file: File): Promise<string> {
+  const supabase = createClient();
+  const ext = file.name.split(".").pop();
+  const path = `products/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await supabase.storage.from("product-images").upload(path, file);
+  if (error) throw new Error(`Falha ao enviar imagem: ${error.message}`);
+  const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+  return data.publicUrl;
+}
 
 function Toggle({
   checked,
@@ -69,22 +81,50 @@ function NewProductForm({ categoryId }: { categoryId: string }) {
   const [price, setPrice] = useState("");
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !price) return;
+    setError(null);
     setSaving(true);
-    await createProduct({
-      category_id: categoryId,
-      name: name.trim(),
-      description: description.trim(),
-      price_cents: Math.round(parseFloat(price.replace(",", ".")) * 100),
-    });
-    setName("");
-    setDescription("");
-    setPrice("");
-    setSaving(false);
-    setOpen(false);
+    try {
+      let image_url: string | undefined;
+      if (imageFile) {
+        setUploading(true);
+        image_url = await uploadProductImage(imageFile);
+        setUploading(false);
+      }
+      await createProduct({
+        category_id: categoryId,
+        name: name.trim(),
+        description: description.trim(),
+        price_cents: Math.round(parseFloat(price.replace(",", ".")) * 100),
+        image_url,
+      });
+      setName("");
+      setDescription("");
+      setPrice("");
+      setImageFile(null);
+      setImagePreview(null);
+      setOpen(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao salvar produto.");
+    } finally {
+      setSaving(false);
+      setUploading(false);
+    }
   }
 
   if (!open) {
@@ -100,6 +140,26 @@ function NewProductForm({ categoryId }: { categoryId: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 mt-2 items-center">
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        className="hidden"
+      />
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        className="w-9 h-9 rounded-md bg-chip border border-chip-border flex items-center justify-center flex-shrink-0 overflow-hidden"
+        aria-label="Escolher foto"
+      >
+        {imagePreview ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imagePreview} alt="" className="w-full h-full object-cover" />
+        ) : (
+          <ImagePlus size={16} className="text-accent-dark" />
+        )}
+      </button>
       <input
         placeholder="Nome"
         value={name}
@@ -120,13 +180,15 @@ function NewProductForm({ categoryId }: { categoryId: string }) {
       />
       <button
         disabled={saving}
-        className="bg-accent text-accent-ink font-semibold text-sm px-3 py-1.5 rounded-md disabled:opacity-60"
+        className="bg-accent text-accent-ink font-semibold text-sm px-3 py-1.5 rounded-md disabled:opacity-60 flex items-center gap-1.5"
       >
-        Salvar
+        {uploading && <Loader2 size={13} className="animate-spin" />}
+        {uploading ? "Enviando foto..." : saving ? "Salvando..." : "Salvar"}
       </button>
       <button type="button" onClick={() => setOpen(false)} className="text-muted text-sm">
         Cancelar
       </button>
+      {error && <p className="text-[#B91C1C] text-xs w-full">{error}</p>}
     </form>
   );
 }

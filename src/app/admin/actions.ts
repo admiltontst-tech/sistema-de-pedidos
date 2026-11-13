@@ -66,6 +66,7 @@ export async function createProduct(data: {
   name: string;
   description: string;
   price_cents: number;
+  image_url?: string;
 }) {
   const supabase = await createClient();
   const { error } = await supabase.from("products").insert({
@@ -73,6 +74,7 @@ export async function createProduct(data: {
     name: data.name,
     description: data.description || null,
     price_cents: data.price_cents,
+    image_url: data.image_url || null,
   });
   if (error) throw new Error(error.message);
   revalidatePath("/admin/produtos");
