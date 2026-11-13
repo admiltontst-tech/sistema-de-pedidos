@@ -12,6 +12,8 @@ import {
   ShieldCheck,
   CheckCircle2,
   MessageCircle,
+  Bike,
+  Megaphone,
 } from "lucide-react";
 import { useCartStore, cartTotalCents, cartCount } from "@/lib/cart-store";
 import { formatMoney } from "@/lib/money";
@@ -632,6 +634,12 @@ export function MenuPage({
             <span className="inline-flex items-center gap-1.5 bg-chip border border-chip-border text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full">
               <Clock size={14} className="text-[#B45309]" /> {settings.opening_hours}
             </span>
+            {settings.delivery_time_estimate && (
+              <span className="inline-flex items-center gap-1.5 bg-chip border border-chip-border text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full">
+                <Bike size={14} className="text-[#B45309]" /> {settings.delivery_time_estimate} ·
+                tempo de entrega
+              </span>
+            )}
             <span className="inline-flex items-center gap-1.5 bg-chip border border-chip-border text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full">
               <MapPin size={14} className="text-[#B45309]" /> {settings.address}
             </span>
@@ -639,6 +647,14 @@ export function MenuPage({
               <ShieldCheck size={14} className="text-[#B45309]" /> Ambiente familiar · Zero álcool
             </span>
           </div>
+          {settings.welcome_message && (
+            <div className="flex items-start gap-3 bg-surface/80 border border-border rounded-xl p-4 mt-5 max-w-[640px]">
+              <div className="w-8 h-8 rounded-full bg-chip flex items-center justify-center flex-shrink-0">
+                <Megaphone size={15} className="text-accent-dark" />
+              </div>
+              <p className="text-foreground text-sm leading-relaxed">{settings.welcome_message}</p>
+            </div>
+          )}
         </div>
       </div>
 

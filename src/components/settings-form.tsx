@@ -14,6 +14,8 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
     is_open: settings.is_open,
     delivery_fee: (settings.delivery_fee_cents / 100).toFixed(2),
     min_order: (settings.min_order_cents / 100).toFixed(2),
+    delivery_time_estimate: settings.delivery_time_estimate ?? "",
+    welcome_message: settings.welcome_message ?? "",
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -31,6 +33,8 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
       is_open: form.is_open,
       delivery_fee_cents: Math.round(parseFloat(form.delivery_fee || "0") * 100),
       min_order_cents: Math.round(parseFloat(form.min_order || "0") * 100),
+      delivery_time_estimate: form.delivery_time_estimate,
+      welcome_message: form.welcome_message,
     });
     setSaving(false);
     setSaved(true);
@@ -90,6 +94,24 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
           value={form.opening_hours}
           onChange={(e) => setForm((f) => ({ ...f, opening_hours: e.target.value }))}
           className="w-full mt-1.5 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-foreground"
+        />
+      </label>
+      <label className="text-[12.5px] font-bold text-muted uppercase">
+        Tempo estimado de entrega
+        <input
+          value={form.delivery_time_estimate}
+          onChange={(e) => setForm((f) => ({ ...f, delivery_time_estimate: e.target.value }))}
+          placeholder="Ex: 40-60 min"
+          className="w-full mt-1.5 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-foreground"
+        />
+      </label>
+      <label className="text-[12.5px] font-bold text-muted uppercase">
+        Mensagem de boas-vindas
+        <textarea
+          value={form.welcome_message}
+          onChange={(e) => setForm((f) => ({ ...f, welcome_message: e.target.value }))}
+          rows={3}
+          className="w-full mt-1.5 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-foreground resize-none"
         />
       </label>
       <div className="flex gap-4">

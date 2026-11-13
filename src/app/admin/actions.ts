@@ -20,6 +20,8 @@ export async function updateStoreSettings(data: {
   is_open: boolean;
   delivery_fee_cents: number;
   min_order_cents: number;
+  delivery_time_estimate: string;
+  welcome_message: string;
 }) {
   const supabase = await createClient();
   const { error } = await supabase.from("store_settings").update(data).eq("id", 1);

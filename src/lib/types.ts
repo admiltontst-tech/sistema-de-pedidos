@@ -54,6 +54,8 @@ export type StoreSettings = {
   min_order_cents: number;
   logo_url: string | null;
   cover_url: string | null;
+  delivery_time_estimate: string | null;
+  welcome_message: string | null;
 };
 
 export type OrderStatus =
