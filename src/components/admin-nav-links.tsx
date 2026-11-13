@@ -15,14 +15,14 @@ export function AdminNavLinks() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-1.5">
+    <nav className="flex gap-1.5 overflow-x-auto [&::-webkit-scrollbar]:hidden -mx-5 px-5 sm:mx-0 sm:px-0">
       {LINKS.map(({ href, label, icon: Icon }) => {
         const active = pathname === href;
         return (
           <Link
             key={href}
             href={href}
-            className={`flex items-center gap-1.5 text-sm font-semibold px-3 py-2 rounded-lg transition ${
+            className={`flex items-center gap-1.5 text-sm font-semibold px-3 py-2 rounded-lg transition whitespace-nowrap flex-shrink-0 ${
               active ? "bg-chip text-accent-dark" : "text-muted hover:text-foreground"
             }`}
           >
