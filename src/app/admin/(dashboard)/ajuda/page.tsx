@@ -9,6 +9,7 @@ import {
   Volume2,
   SlidersHorizontal,
   LayoutGrid,
+  Smartphone,
 } from "lucide-react";
 
 function Section({
@@ -145,6 +146,25 @@ export default function AdminHelpPage() {
           <p className="text-muted text-xs">
             Acesso do garçom: crie um login dele em Configurações → Acesso da equipe. Esse login só
             abre a tela de Mesas — sem ver Cardápio, Configurações, nem dados de outros clientes.
+          </p>
+        </Section>
+
+        <Section icon={Smartphone} title="Instalar o painel como app no celular">
+          <p>
+            Dá pra deixar o painel com ícone próprio na tela inicial do celular, abrindo em tela
+            cheia, sem barra de navegador — como se fosse um app baixado na loja.
+          </p>
+          <ol>
+            <li>Abra o link do painel pelo navegador do celular (Chrome no Android, Safari no iPhone).</li>
+            <li>
+              Toque no menu do navegador (⋮ no Chrome, ou o ícone de compartilhar no Safari) e
+              escolha <strong>&quot;Adicionar à tela inicial&quot;</strong>.
+            </li>
+            <li>Confirme o nome (&quot;Painel Beh&quot;) — pronto, já aparece o ícone na tela do celular.</li>
+          </ol>
+          <p className="text-muted text-xs">
+            Vale tanto pro login do garçom quanto pro do diretor — cada um instala no próprio
+            celular.
           </p>
         </Section>
 
