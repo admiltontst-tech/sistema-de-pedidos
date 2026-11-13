@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, Loader2, Pencil } from "lucide-react";
+import { ImagePlus, Loader2, Pencil, SlidersHorizontal } from "lucide-react";
 import {
   toggleProductAvailable,
   toggleProductFeatured,
@@ -11,6 +11,8 @@ import {
   deleteProduct,
 } from "@/app/admin/actions";
 import { createClient } from "@/lib/supabase/client";
+import { NewCategoryForm, CategoryHeader } from "@/components/category-admin-controls";
+import { ProductOptionsEditor } from "@/components/product-options-editor";
 import type { CategoryWithProducts, Product } from "@/lib/types";
 
 async function uploadProductImage(file: File): Promise<string> {
@@ -255,49 +257,72 @@ function NewProductForm({ categoryId }: { categoryId: string }) {
   );
 }
 
+function ProductRow({ product }: { product: Product }) {
+  const [showOptions, setShowOptions] = useState(false);
+  const groupCount = product.product_option_groups.length;
+
+  return (
+    <div className="border-b border-border-soft last:border-b-0 py-3">
+      <div className="flex items-center gap-3 flex-wrap">
+        <ProductThumb product={product} />
+        <span className="flex-1 min-w-[120px] text-sm font-medium text-foreground">
+          {product.name}
+        </span>
+        <PriceInput product={product} />
+        <Toggle
+          checked={product.available}
+          onChange={(v) => toggleProductAvailable(product.id, v)}
+          label="Disponível"
+          uncheckedLabel="Indisponível"
+          tone="green"
+        />
+        <Toggle
+          checked={product.featured}
+          onChange={(v) => toggleProductFeatured(product.id, v)}
+          label="Destaque"
+        />
+        <button
+          onClick={() => setShowOptions((v) => !v)}
+          className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-full border transition ${
+            showOptions || groupCount > 0
+              ? "border-accent bg-accent/10 text-accent-dark"
+              : "border-border bg-surface text-muted"
+          }`}
+        >
+          <SlidersHorizontal size={12} />
+          Opções{groupCount > 0 ? ` (${groupCount})` : ""}
+        </button>
+        <button
+          onClick={() => {
+            if (confirm(`Remover "${product.name}"?`)) deleteProduct(product.id);
+          }}
+          className="text-[#B91C1C] text-xs font-semibold hover:underline"
+        >
+          Remover
+        </button>
+      </div>
+      {showOptions && <ProductOptionsEditor product={product} />}
+    </div>
+  );
+}
+
 export function ProductsAdmin({ categories }: { categories: CategoryWithProducts[] }) {
   return (
     <div className="flex flex-col gap-6">
+      <div>
+        <NewCategoryForm />
+      </div>
       {categories.map((category) => (
         <div key={category.id} className="bg-surface border border-border rounded-2xl p-5">
           <div className="flex items-center justify-between mb-3.5">
-            <h2 className="font-display font-bold text-heading text-base">{category.name}</h2>
+            <CategoryHeader id={category.id} name={category.name} />
             <span className="text-muted text-xs font-semibold bg-chip px-2.5 py-1 rounded-full">
               {category.products.length} {category.products.length === 1 ? "item" : "itens"}
             </span>
           </div>
           <div className="flex flex-col">
             {category.products.map((product) => (
-              <div
-                key={product.id}
-                className="flex items-center gap-3 py-3 border-b border-border-soft last:border-b-0 flex-wrap"
-              >
-                <ProductThumb product={product} />
-                <span className="flex-1 min-w-[120px] text-sm font-medium text-foreground">
-                  {product.name}
-                </span>
-                <PriceInput product={product} />
-                <Toggle
-                  checked={product.available}
-                  onChange={(v) => toggleProductAvailable(product.id, v)}
-                  label="Disponível"
-                  uncheckedLabel="Indisponível"
-                  tone="green"
-                />
-                <Toggle
-                  checked={product.featured}
-                  onChange={(v) => toggleProductFeatured(product.id, v)}
-                  label="Destaque"
-                />
-                <button
-                  onClick={() => {
-                    if (confirm(`Remover "${product.name}"?`)) deleteProduct(product.id);
-                  }}
-                  className="text-[#B91C1C] text-xs font-semibold hover:underline"
-                >
-                  Remover
-                </button>
-              </div>
+              <ProductRow key={product.id} product={product} />
             ))}
             {category.products.length === 0 && (
               <p className="text-muted text-sm py-2">Nenhum produto nessa categoria ainda.</p>
