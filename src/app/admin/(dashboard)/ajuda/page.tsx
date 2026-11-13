@@ -124,7 +124,9 @@ export default function AdminHelpPage() {
           </ul>
           <p className="text-muted text-xs">
             Mais abaixo nessa mesma página, em <strong className="text-heading">Acesso da equipe</strong>,
-            dá pra criar um login separado pro garçom.
+            dá pra criar logins separados: <strong className="text-heading">Administrador</strong> (acesso
+            total, igual o login principal — útil pra separar o login de quem desenvolveu o sistema do
+            login do dono/diretor) ou <strong className="text-heading">Garçom</strong> (só a tela de Mesas).
           </p>
         </Section>
 
