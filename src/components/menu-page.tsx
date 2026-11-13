@@ -313,13 +313,11 @@ function CartDrawer({
 function CheckoutDrawer({
   items,
   settings,
-  onClose,
   onBack,
   onSubmitted,
 }: {
   items: CartItem[];
   settings: StoreSettings;
-  onClose: () => void;
   onBack: () => void;
   onSubmitted: (orderId: string, whatsappUrl: string) => void;
 }) {
@@ -854,7 +852,6 @@ export function MenuPage({
         <CheckoutDrawer
           items={items}
           settings={settings}
-          onClose={() => setShowCheckout(false)}
           onBack={() => {
             setShowCheckout(false);
             setShowCart(true);
