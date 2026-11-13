@@ -613,20 +613,23 @@ export function MenuPage({
       </div>
 
       {/* HERO */}
-      <div
-        className="relative overflow-hidden border-b border-border-soft bg-cover bg-center"
-        style={settings.cover_url ? { backgroundImage: `url(${settings.cover_url})`, backgroundPosition: "center 65%" } : undefined}
-      >
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(90deg, rgba(251,246,239,.97) 0%, rgba(251,246,239,.93) 38%, rgba(251,246,239,.55) 65%, rgba(251,246,239,.15) 100%)",
-          }}
-        />
-        <div className="relative z-10 max-w-[1180px] mx-auto px-5 py-10">
+      <div className="border-b border-border-soft">
+        {settings.cover_url && (
+          <div className="relative w-full h-44 sm:h-64 overflow-hidden bg-chip">
+            <Image
+              src={settings.cover_url}
+              alt={settings.name}
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              style={{ objectPosition: "center 60%" }}
+            />
+          </div>
+        )}
+        <div className="max-w-[1180px] mx-auto px-5 py-7">
           <h2 className="font-display text-[34px] text-heading">Peça pelo cardápio digital</h2>
-          <p className="text-foreground font-medium text-[15px] mt-2 max-w-[520px]">
+          <p className="text-foreground font-semibold text-[15px] mt-2 max-w-[520px]">
             Escolha seus espetinhos, monte seu macarrão do seu jeito e finalize o pedido direto pelo
             WhatsApp.
           </p>
@@ -646,9 +649,32 @@ export function MenuPage({
             <span className="inline-flex items-center gap-1.5 bg-chip border border-chip-border text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full">
               <ShieldCheck size={14} className="text-[#B45309]" /> Ambiente familiar · Zero álcool
             </span>
+            {settings.instagram_handle && (
+              <a
+                href={`https://instagram.com/${settings.instagram_handle}`}
+                target="_blank"
+                className="inline-flex items-center gap-1.5 bg-chip border border-chip-border text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full hover:brightness-95 transition"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="text-[#B45309]"
+                  aria-hidden="true"
+                >
+                  <rect x="2" y="2" width="20" height="20" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                </svg>
+                @{settings.instagram_handle}
+              </a>
+            )}
           </div>
           {settings.welcome_message && (
-            <div className="flex items-start gap-3 bg-surface/80 border border-border rounded-xl p-4 mt-5 max-w-[640px]">
+            <div className="flex items-start gap-3 bg-surface border border-border rounded-xl p-4 mt-5 max-w-[640px]">
               <div className="w-8 h-8 rounded-full bg-chip flex items-center justify-center flex-shrink-0">
                 <Megaphone size={15} className="text-accent-dark" />
               </div>

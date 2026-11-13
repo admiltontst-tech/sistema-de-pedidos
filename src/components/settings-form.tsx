@@ -16,6 +16,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
     min_order: (settings.min_order_cents / 100).toFixed(2),
     delivery_time_estimate: settings.delivery_time_estimate ?? "",
     welcome_message: settings.welcome_message ?? "",
+    instagram_handle: settings.instagram_handle ?? "",
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -35,6 +36,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
       min_order_cents: Math.round(parseFloat(form.min_order || "0") * 100),
       delivery_time_estimate: form.delivery_time_estimate,
       welcome_message: form.welcome_message,
+      instagram_handle: form.instagram_handle,
     });
     setSaving(false);
     setSaved(true);
@@ -77,6 +79,15 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
         <input
           value={form.whatsapp_phone}
           onChange={(e) => setForm((f) => ({ ...f, whatsapp_phone: e.target.value }))}
+          className="w-full mt-1.5 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-foreground"
+        />
+      </label>
+      <label className="text-[12.5px] font-bold text-muted uppercase">
+        Instagram (só o usuário, sem @)
+        <input
+          value={form.instagram_handle}
+          onChange={(e) => setForm((f) => ({ ...f, instagram_handle: e.target.value }))}
+          placeholder="espetinhodobeh"
           className="w-full mt-1.5 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-foreground"
         />
       </label>

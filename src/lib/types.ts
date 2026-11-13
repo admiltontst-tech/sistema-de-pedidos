@@ -56,6 +56,7 @@ export type StoreSettings = {
   cover_url: string | null;
   delivery_time_estimate: string | null;
   welcome_message: string | null;
+  instagram_handle: string | null;
 };
 
 export type OrderStatus =
