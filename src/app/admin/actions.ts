@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import type { OrderStatus } from "@/lib/types";
+import type { Order, OrderItem, OrderStatus } from "@/lib/types";
 
 function slugify(name: string) {
   return (
@@ -230,4 +230,38 @@ export async function deleteOption(optionId: string) {
   if (error) throw new Error(error.message);
   revalidatePath("/admin/produtos");
   revalidatePath("/");
+}
+
+function onlyDigits(s: string) {
+  return s.replace(/\D/g, "");
+}
+
+export async function searchCustomerData(
+  query: string
+): Promise<(Order & { order_items: OrderItem[] })[]> {
+  const q = query.trim();
+  if (!q) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, order_items(*)")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+
+  const qDigits = onlyDigits(q);
+  const qLower = q.toLowerCase();
+
+  return ((data ?? []) as (Order & { order_items: OrderItem[] })[]).filter((order) => {
+    if (qDigits.length >= 4 && onlyDigits(order.customer_phone).includes(qDigits)) return true;
+    return order.customer_name.toLowerCase().includes(qLower);
+  });
+}
+
+export async function deleteOrdersPermanently(orderIds: string[]) {
+  if (orderIds.length === 0) return;
+  const supabase = await createClient();
+  const { error } = await supabase.from("orders").delete().in("id", orderIds);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin");
+  revalidatePath("/admin/privacidade");
 }

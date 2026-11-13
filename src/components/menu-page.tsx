@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ShoppingCart,
   X,
@@ -494,6 +495,14 @@ function CheckoutDrawer({
             </div>
           </div>
           {error && <p className="text-[#B91C1C] text-sm">{error}</p>}
+          <p className="flex items-start gap-1.5 text-muted text-xs leading-relaxed">
+            <ShieldCheck size={14} className="flex-shrink-0 mt-0.5" />
+            Seus dados são usados só pra processar esse pedido e protegidos conforme a LGPD. Veja a{" "}
+            <Link href="/privacidade" target="_blank" className="underline hover:text-foreground">
+              Política de Privacidade
+            </Link>
+            .
+          </p>
         </div>
         <div className="p-5 border-t border-border-soft">
           <button
@@ -798,6 +807,12 @@ export function MenuPage({
               <br />
               Delivery: {settings.opening_hours}
             </div>
+            <Link
+              href="/privacidade"
+              className="text-muted text-xs underline mt-2 inline-block hover:text-foreground"
+            >
+              Política de Privacidade e Termos de Uso
+            </Link>
           </div>
           <a
             href={`https://wa.me/${settings.whatsapp_phone}`}

@@ -5,6 +5,7 @@ import {
   Printer,
   Share2,
   ShieldAlert,
+  ShieldCheck,
   Volume2,
   SlidersHorizontal,
 } from "lucide-react";
@@ -126,6 +127,25 @@ export default function AdminHelpPage() {
             O link do site (ex: <span className="font-mono text-xs bg-chip px-1.5 py-0.5 rounded">sistema-de-pedidos-nu.vercel.app</span>)
             pode ser compartilhado direto no WhatsApp, Instagram ou impresso num QR code pra colocar
             nas mesas.
+          </p>
+        </Section>
+
+        <Section icon={ShieldCheck} title="Privacidade (LGPD)">
+          <p>
+            Se algum cliente pedir pra ver ou apagar os dados dele (direito garantido pela LGPD),
+            use a aba <strong>Privacidade</strong>.
+          </p>
+          <ol>
+            <li>Busque pelo nome ou telefone que o cliente usou no pedido.</li>
+            <li>Confira a lista de pedidos encontrados e desmarque qualquer um que não seja dele.</li>
+            <li>
+              Clique em <strong>Baixar dados</strong> pra gerar um arquivo com tudo que temos
+              daquele cliente, ou em <strong>Excluir definitivamente</strong> pra apagar os pedidos
+              e os dados dele do sistema (não tem como desfazer).
+            </li>
+          </ol>
+          <p className="text-muted text-xs">
+            Veja também a Política de Privacidade do site, linkada no rodapé do cardápio público.
           </p>
         </Section>
 

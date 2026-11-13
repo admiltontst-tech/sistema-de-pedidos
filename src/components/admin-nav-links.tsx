@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardList, UtensilsCrossed, Settings, HelpCircle } from "lucide-react";
+import { ClipboardList, UtensilsCrossed, Settings, HelpCircle, ShieldCheck } from "lucide-react";
 
 const LINKS = [
   { href: "/admin", label: "Pedidos", icon: ClipboardList },
   { href: "/admin/produtos", label: "Cardápio", icon: UtensilsCrossed },
   { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
+  { href: "/admin/privacidade", label: "Privacidade", icon: ShieldCheck },
   { href: "/admin/ajuda", label: "Ajuda", icon: HelpCircle },
 ];
 
