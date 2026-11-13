@@ -624,7 +624,7 @@ export function MenuPage({
         />
         <div className="relative z-10 max-w-[1180px] mx-auto px-5 py-10">
           <h2 className="font-display text-[34px] text-heading">Peça pelo cardápio digital</h2>
-          <p className="text-muted text-[15px] mt-2 max-w-[520px]">
+          <p className="text-foreground font-medium text-[15px] mt-2 max-w-[520px]">
             Escolha seus espetinhos, monte seu macarrão do seu jeito e finalize o pedido direto pelo
             WhatsApp.
           </p>
