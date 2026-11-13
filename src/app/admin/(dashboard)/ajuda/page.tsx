@@ -5,6 +5,8 @@ import {
   Printer,
   Share2,
   ShieldAlert,
+  Volume2,
+  SlidersHorizontal,
 } from "lucide-react";
 
 function Section({
@@ -57,6 +59,14 @@ export default function AdminHelpPage() {
           <p>A atualização é só clicar no status e escolher o novo — salva na hora, sem precisar confirmar nada.</p>
         </Section>
 
+        <Section icon={Volume2} title="Aviso de pedido novo">
+          <p>
+            Com o painel aberto (mesmo em outra aba ou minimizado), toda vez que um pedido novo
+            chega toca um som e aparece um aviso na tela com o nome do cliente. Não precisa ficar
+            atualizando a página — é automático.
+          </p>
+        </Section>
+
         <Section icon={Printer} title="Imprimir comanda">
           <p>
             Ao lado do status de cada pedido tem um ícone de impressora. Clicando nele, abre uma
@@ -73,23 +83,40 @@ export default function AdminHelpPage() {
         <Section icon={UtensilsCrossed} title="Cardápio">
           <p>Na aba <strong>Cardápio</strong>, os produtos aparecem agrupados por categoria.</p>
           <ul>
+            <li><strong>+ Nova categoria:</strong> no topo da página, cria uma categoria nova (ex: Sobremesas).</li>
+            <li><strong>Nome da categoria:</strong> passe o mouse (ou toque, no celular) em cima do nome pra ver o lápis de editar e a lixeira de excluir. Só dá pra excluir categoria vazia — se tiver produto dentro, mova ou apague os produtos antes.</li>
+            <li><strong>Foto do produto:</strong> clique na miniatura (a fotinho ao lado do nome) pra escolher uma foto nova do celular ou computador — troca na hora.</li>
             <li><strong>Preço:</strong> clique no valor, digite o novo preço e clique fora do campo — salva sozinho.</li>
-            <li><strong>Disponível:</strong> desmarque pra esconder um produto do site temporariamente (ex: acabou o ingrediente) sem precisar apagar.</li>
+            <li><strong>Disponível / Indisponível:</strong> clique pra alternar. Fica vermelho (Indisponível) quando o produto some do site temporariamente, sem precisar apagar — útil quando acaba o ingrediente.</li>
             <li><strong>Destaque:</strong> marca o produto pra aparecer na seção "Destaques da casa", no topo do cardápio público.</li>
-            <li><strong>+ Adicionar produto:</strong> no final de cada categoria, cria um item novo com nome, descrição e preço.</li>
+            <li><strong>+ Adicionar produto:</strong> no final de cada categoria, cria um item novo com nome, descrição, preço e foto (opcional).</li>
             <li><strong>Remover:</strong> apaga o produto definitivamente (pede confirmação antes).</li>
           </ul>
-          <p className="text-muted text-xs">
-            As opções do &quot;Monte seu Macarrão&quot; (massa, proteína, molho, extras) ainda precisam
-            ser editadas direto no Supabase — se quiser, posso te mostrar como ou criar uma tela pra isso.
+        </Section>
+
+        <Section icon={SlidersHorizontal} title="Opções de produto (ex: Monte seu Macarrão)">
+          <p>
+            Pra produtos que o cliente precisa escolher coisas (massa, proteína, molho, extras),
+            clique no botão <strong>Opções</strong> na linha do produto. Abre um editor onde dá pra:
           </p>
+          <ul>
+            <li><strong>Grupo:</strong> ex: "Massa", "Proteína", "Molho". Dá nome, escolhe se é escolha única ou múltipla escolha, se é obrigatório, e (na múltipla) o máximo de opções que o cliente pode marcar.</li>
+            <li><strong>Opções dentro do grupo:</strong> ex: "Parmegiana", "+ R$ 5,00". Edite o nome e o valor adicional a qualquer momento, clicando e saindo do campo.</li>
+            <li><strong>+ Grupo</strong> e <strong>+ opção:</strong> adicionam novos grupos e novas opções.</li>
+            <li>O ícone de lixeira remove grupos ou opções (pede confirmação pra remover um grupo inteiro).</li>
+          </ul>
+          <p>Não precisa mais entrar no Supabase pra isso — tudo é feito aqui no painel.</p>
         </Section>
 
         <Section icon={Settings} title="Configurações da loja">
           <ul>
             <li><strong>Loja aberta/fechada:</strong> o botão no topo alterna o status que aparece pros clientes no site. Lembre de marcar como fechada fora do horário de funcionamento.</li>
+            <li><strong>Promoção:</strong> ative e escreva um título e as regras (ex: "Quarta do Baião") pra aparecer em destaque no topo do site. Desative quando a promoção acabar — o texto fica salvo pra próxima vez.</li>
             <li><strong>Nome, frase, endereço, horário:</strong> aparecem no cabeçalho e no rodapé do site público.</li>
             <li><strong>WhatsApp:</strong> número que recebe os pedidos (só números, com DDI 55 e DDD, ex: 5585999999999).</li>
+            <li><strong>Instagram:</strong> coloque só o usuário (sem @) pra aparecer um atalho clicável no site.</li>
+            <li><strong>Tempo estimado de entrega:</strong> texto livre (ex: "40-60 min") mostrado pro cliente no cardápio.</li>
+            <li><strong>Mensagem de boas-vindas:</strong> texto que aparece em destaque pro cliente ao abrir o site.</li>
             <li><strong>Taxa de entrega e pedido mínimo:</strong> aplicados automaticamente no checkout do cliente.</li>
           </ul>
         </Section>
