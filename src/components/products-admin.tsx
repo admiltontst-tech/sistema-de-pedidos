@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
-import { ImagePlus, Loader2 } from "lucide-react";
+import { ImagePlus, Loader2, Pencil } from "lucide-react";
 import {
   toggleProductAvailable,
   toggleProductFeatured,
   updateProductPrice,
+  updateProductImage,
   createProduct,
   deleteProduct,
 } from "@/app/admin/actions";
@@ -23,31 +23,93 @@ async function uploadProductImage(file: File): Promise<string> {
   return data.publicUrl;
 }
 
+function ProductThumb({ product }: { product: Product }) {
+  const [preview, setPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPreview(URL.createObjectURL(file));
+    setUploading(true);
+    try {
+      const url = await uploadProductImage(file);
+      await updateProductImage(product.id, url);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  const src = preview ?? product.image_url;
+
+  return (
+    <button
+      type="button"
+      onClick={() => fileInputRef.current?.click()}
+      className="relative w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 bg-chip group"
+      aria-label={`Trocar foto de ${product.name}`}
+      title="Clique para trocar a foto"
+    >
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        className="hidden"
+      />
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt={product.name} className="w-full h-full object-cover" />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+          <ImagePlus size={14} className="text-accent-dark" />
+        </div>
+      )}
+      <div
+        className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${
+          uploading ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+        }`}
+      >
+        {uploading ? (
+          <Loader2 size={14} className="text-white animate-spin" />
+        ) : (
+          <Pencil size={13} className="text-white" />
+        )}
+      </div>
+    </button>
+  );
+}
+
 function Toggle({
   checked,
   onChange,
   label,
+  uncheckedLabel,
   tone = "accent",
 }: {
   checked: boolean;
   onChange: (value: boolean) => void;
   label: string;
+  uncheckedLabel?: string;
   tone?: "accent" | "green";
 }) {
   const checkedClass =
     tone === "green"
       ? "bg-[#1F9D55]/10 border-[#1F9D55] text-[#15803D]"
       : "bg-accent/10 border-accent text-accent-dark";
+  const uncheckedClass =
+    tone === "green" ? "bg-[#D62828]/10 border-[#D62828] text-[#B91C1C]" : "bg-surface border-border text-muted";
 
   return (
     <button
       type="button"
       onClick={() => onChange(!checked)}
       className={`text-xs font-semibold px-2.5 py-1.5 rounded-full border transition ${
-        checked ? checkedClass : "bg-surface border-border text-muted"
+        checked ? checkedClass : uncheckedClass
       }`}
     >
-      {label}
+      {checked ? label : uncheckedLabel ?? label}
     </button>
   );
 }
@@ -210,17 +272,7 @@ export function ProductsAdmin({ categories }: { categories: CategoryWithProducts
                 key={product.id}
                 className="flex items-center gap-3 py-3 border-b border-border-soft last:border-b-0 flex-wrap"
               >
-                <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 bg-chip">
-                  {product.image_url && (
-                    <Image
-                      src={product.image_url}
-                      alt={product.name}
-                      width={36}
-                      height={36}
-                      className="object-cover w-full h-full"
-                    />
-                  )}
-                </div>
+                <ProductThumb product={product} />
                 <span className="flex-1 min-w-[120px] text-sm font-medium text-foreground">
                   {product.name}
                 </span>
@@ -229,6 +281,7 @@ export function ProductsAdmin({ categories }: { categories: CategoryWithProducts
                   checked={product.available}
                   onChange={(v) => toggleProductAvailable(product.id, v)}
                   label="Disponível"
+                  uncheckedLabel="Indisponível"
                   tone="green"
                 />
                 <Toggle

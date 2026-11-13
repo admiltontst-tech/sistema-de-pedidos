@@ -61,6 +61,17 @@ export async function updateProductPrice(productId: string, priceCents: number) 
   revalidatePath("/");
 }
 
+export async function updateProductImage(productId: string, imageUrl: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("products")
+    .update({ image_url: imageUrl })
+    .eq("id", productId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/produtos");
+  revalidatePath("/");
+}
+
 export async function createProduct(data: {
   category_id: string;
   name: string;
