@@ -27,10 +27,29 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && request.nextUrl.pathname.startsWith("/admin") && request.nextUrl.pathname !== "/admin/login") {
+  const path = request.nextUrl.pathname;
+
+  if (!user && path.startsWith("/admin") && path !== "/admin/login") {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     return NextResponse.redirect(url);
+  }
+
+  if (user) {
+    const role = (user.user_metadata as { role?: string } | undefined)?.role;
+    // Garçom só pode acessar a área de mesas/comandas: sem cardápio,
+    // configurações, pedidos completos (com dados do cliente) nem a
+    // ferramenta de privacidade/LGPD.
+    if (
+      role === "garcom" &&
+      path.startsWith("/admin") &&
+      path !== "/admin/login" &&
+      !path.startsWith("/admin/mesas")
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/mesas";
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;

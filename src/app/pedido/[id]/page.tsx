@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { CheckCircle2, Circle } from "lucide-react";
 import { getOrderWithItems } from "@/lib/queries";
 import { formatMoney } from "@/lib/money";
+import { paymentLabel } from "@/lib/order-status";
 import type { OrderStatus } from "@/lib/types";
 
 export const revalidate = 0;
@@ -14,8 +15,6 @@ const STEPS: { status: OrderStatus; label: string }[] = [
   { status: "saiu_para_entrega", label: "Saiu para entrega" },
   { status: "entregue", label: "Entregue" },
 ];
-
-const PAYMENT_LABEL: Record<string, string> = { pix: "Pix", dinheiro: "Dinheiro", cartao: "Cartão" };
 
 export default async function OrderTrackingPage(props: PageProps<"/pedido/[id]">) {
   const { id } = await props.params;
@@ -99,7 +98,7 @@ export default async function OrderTrackingPage(props: PageProps<"/pedido/[id]">
             <div>
               {order.delivery_type === "delivery" ? `Entrega em: ${order.address}` : "Retirada no local"}
             </div>
-            <div>Pagamento: {PAYMENT_LABEL[order.payment_method] ?? order.payment_method}</div>
+            <div>Pagamento: {paymentLabel(order.payment_method)}</div>
           </div>
         </div>
       </div>

@@ -60,6 +60,7 @@ export type StoreSettings = {
   promo_active: boolean;
   promo_title: string | null;
   promo_description: string | null;
+  table_count: number;
 };
 
 export type OrderStatus =
@@ -70,7 +71,7 @@ export type OrderStatus =
   | "entregue"
   | "cancelado";
 
-export type DeliveryType = "delivery" | "pickup";
+export type DeliveryType = "delivery" | "pickup" | "local";
 export type PaymentMethod = "pix" | "dinheiro" | "cartao";
 
 export type Order = {
@@ -79,14 +80,31 @@ export type Order = {
   customer_phone: string;
   delivery_type: DeliveryType;
   address: string | null;
-  payment_method: PaymentMethod;
+  payment_method: PaymentMethod | null;
   notes: string | null;
   subtotal_cents: number;
   delivery_fee_cents: number;
   total_cents: number;
   status: OrderStatus;
   created_at: string;
+  tab_id: string | null;
 };
+
+export type TabKind = "mesa" | "comanda";
+export type TabStatus = "aberta" | "fechada";
+
+export type Tab = {
+  id: string;
+  kind: TabKind;
+  table_number: number | null;
+  label: string;
+  status: TabStatus;
+  payment_method: PaymentMethod | null;
+  opened_at: string;
+  closed_at: string | null;
+};
+
+export type StaffRole = "admin" | "garcom";
 
 export type OrderItem = {
   id: string;

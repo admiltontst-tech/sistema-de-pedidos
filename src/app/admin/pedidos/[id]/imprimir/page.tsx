@@ -2,11 +2,16 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getOrderWithItems, getStoreSettings } from "@/lib/queries";
 import { formatMoney } from "@/lib/money";
+import { paymentLabel } from "@/lib/order-status";
 import { PrintButton } from "@/components/print-button";
 
 export const revalidate = 0;
 
-const PAYMENT_LABEL: Record<string, string> = { pix: "Pix", dinheiro: "Dinheiro", cartao: "Cartão" };
+const DELIVERY_LABEL: Record<string, string> = {
+  delivery: "Entrega:",
+  pickup: "Retirada no local",
+  local: "Atendimento no salão",
+};
 
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString("pt-BR", {
@@ -62,13 +67,13 @@ export default async function PrintOrderPage(props: PageProps<"/admin/pedidos/[i
             <div>
               <span className="font-bold">Cliente:</span> {order.customer_name}
             </div>
-            <div>
-              <span className="font-bold">Telefone:</span> {order.customer_phone}
-            </div>
+            {order.delivery_type !== "local" && (
+              <div>
+                <span className="font-bold">Telefone:</span> {order.customer_phone}
+              </div>
+            )}
             <div className="mt-1">
-              <span className="font-bold">
-                {order.delivery_type === "delivery" ? "Entrega:" : "Retirada no local"}
-              </span>{" "}
+              <span className="font-bold">{DELIVERY_LABEL[order.delivery_type]}</span>{" "}
               {order.delivery_type === "delivery" ? order.address : ""}
             </div>
           </div>
@@ -114,8 +119,7 @@ export default async function PrintOrderPage(props: PageProps<"/admin/pedidos/[i
           <div className="border-t border-dashed border-foreground/30 my-3" />
 
           <div>
-            <span className="font-bold">Pagamento:</span>{" "}
-            {PAYMENT_LABEL[order.payment_method] ?? order.payment_method}
+            <span className="font-bold">Pagamento:</span> {paymentLabel(order.payment_method)}
           </div>
           {order.notes && (
             <div className="mt-1">

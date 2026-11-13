@@ -2,9 +2,15 @@ import Image from "next/image";
 import { AdminLogoutButton } from "@/components/admin-logout-button";
 import { AdminNavLinks } from "@/components/admin-nav-links";
 import { getStoreSettings } from "@/lib/queries";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const settings = await getStoreSettings();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const role = (user?.user_metadata as { role?: string } | undefined)?.role === "garcom" ? "garcom" : "admin";
 
   return (
     <div className="min-h-screen bg-background">
@@ -27,14 +33,14 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
                 {settings.name}
               </div>
               <div className="text-muted text-[11px] font-medium leading-tight truncate">
-                Painel administrativo
+                {role === "garcom" ? "Painel do garçom" : "Painel administrativo"}
               </div>
             </div>
           </div>
           <AdminLogoutButton />
         </div>
         <div className="max-w-5xl mx-auto px-5 pb-2.5 pt-2">
-          <AdminNavLinks />
+          <AdminNavLinks role={role} />
         </div>
       </div>
       <div className="max-w-5xl mx-auto px-5 py-8">{children}</div>

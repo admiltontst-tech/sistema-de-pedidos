@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { CategoryWithProducts, Order, OrderItem, StoreSettings } from "@/lib/types";
+import type { CategoryWithProducts, Order, OrderItem, StoreSettings, Tab } from "@/lib/types";
 
 export async function getStoreSettings(): Promise<StoreSettings> {
   const supabase = await createClient();
@@ -112,4 +112,42 @@ export async function getOrderWithItems(
   }
 
   return { order, items: items ?? [] };
+}
+
+export async function getOpenTabs(): Promise<(Tab & { total_cents: number })[]> {
+  const supabase = await createClient();
+  const { data: tabs, error } = await supabase
+    .from("tabs")
+    .select("*, orders(total_cents, status)")
+    .eq("status", "aberta")
+    .order("opened_at", { ascending: true });
+  if (error) throw new Error(error.message);
+
+  return (tabs ?? []).map(({ orders, ...tab }) => {
+    const total_cents = (orders as { total_cents: number; status: string }[])
+      .filter((o) => o.status !== "cancelado")
+      .reduce((sum, o) => sum + o.total_cents, 0);
+    return { ...(tab as Tab), total_cents };
+  });
+}
+
+export async function getTabWithOrders(
+  tabId: string
+): Promise<{ tab: Tab; orders: (Order & { order_items: OrderItem[] })[] } | null> {
+  const supabase = await createClient();
+  const { data: tab, error: tabError } = await supabase
+    .from("tabs")
+    .select("*")
+    .eq("id", tabId)
+    .single();
+  if (tabError || !tab) return null;
+
+  const { data: orders, error: ordersError } = await supabase
+    .from("orders")
+    .select("*, order_items(*)")
+    .eq("tab_id", tabId)
+    .order("created_at", { ascending: true });
+  if (ordersError) throw new Error(ordersError.message);
+
+  return { tab, orders: (orders ?? []) as (Order & { order_items: OrderItem[] })[] };
 }

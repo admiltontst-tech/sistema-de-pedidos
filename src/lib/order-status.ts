@@ -1,4 +1,4 @@
-import type { OrderStatus } from "@/lib/types";
+import type { OrderStatus, PaymentMethod } from "@/lib/types";
 
 export const STATUS_META: Record<OrderStatus, { label: string; bg: string; text: string }> = {
   recebido: { label: "Recebido", bg: "bg-[#DBEAFE]", text: "text-[#1D4ED8]" },
@@ -15,3 +15,10 @@ export const OPEN_STATUSES: OrderStatus[] = [
   "pronto",
   "saiu_para_entrega",
 ];
+
+const PAYMENT_LABEL: Record<PaymentMethod, string> = { pix: "Pix", dinheiro: "Dinheiro", cartao: "Cartão" };
+
+export function paymentLabel(method: PaymentMethod | null) {
+  if (!method) return "A combinar";
+  return PAYMENT_LABEL[method] ?? method;
+}

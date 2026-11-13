@@ -21,6 +21,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
     promo_active: settings.promo_active,
     promo_title: settings.promo_title ?? "",
     promo_description: settings.promo_description ?? "",
+    table_count: String(settings.table_count),
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -44,6 +45,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
       promo_active: form.promo_active,
       promo_title: form.promo_title,
       promo_description: form.promo_description,
+      table_count: Math.max(1, Math.round(parseFloat(form.table_count || "0") || 0)),
     });
     setSaving(false);
     setSaved(true);
@@ -189,6 +191,19 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
           />
         </label>
       </div>
+      <label className="text-[12.5px] font-bold text-muted uppercase">
+        Número de mesas do salão
+        <input
+          type="number"
+          min={1}
+          value={form.table_count}
+          onChange={(e) => setForm((f) => ({ ...f, table_count: e.target.value }))}
+          className="w-full mt-1.5 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-foreground"
+        />
+        <span className="block text-muted text-[11px] font-normal normal-case mt-1">
+          Define quantas mesas aparecem na aba Mesas, usada pelo garçom.
+        </span>
+      </label>
 
       <button
         disabled={saving}

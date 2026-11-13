@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   Volume2,
   SlidersHorizontal,
+  LayoutGrid,
 } from "lucide-react";
 
 function Section({
@@ -119,7 +120,30 @@ export default function AdminHelpPage() {
             <li><strong>Tempo estimado de entrega:</strong> texto livre (ex: &quot;40-60 min&quot;) mostrado pro cliente no cardápio.</li>
             <li><strong>Mensagem de boas-vindas:</strong> texto que aparece em destaque pro cliente ao abrir o site.</li>
             <li><strong>Taxa de entrega e pedido mínimo:</strong> aplicados automaticamente no checkout do cliente.</li>
+            <li><strong>Número de mesas:</strong> quantas mesas aparecem na aba Mesas (ajuste conforme o salão).</li>
           </ul>
+          <p className="text-muted text-xs">
+            Mais abaixo nessa mesma página, em <strong className="text-heading">Acesso da equipe</strong>,
+            dá pra criar um login separado pro garçom.
+          </p>
+        </Section>
+
+        <Section icon={LayoutGrid} title="Mesas e comandas (pedido do garçom)">
+          <p>
+            Na aba <strong>Mesas</strong>, o garçom registra o pedido de quem está no salão, sem
+            precisar passar pelo WhatsApp.
+          </p>
+          <ol>
+            <li>Toque no número da mesa (ou em <strong>+ Nova comanda</strong>, pra quem não tem mesa fixa, tipo balcão).</li>
+            <li>Escolha os produtos do cardápio — a mesa fica &quot;aberta&quot;, acumulando os pedidos.</li>
+            <li>O cliente pode pedir mais de uma vez: é só voltar na mesma mesa e tocar em <strong>Adicionar pedido</strong>.</li>
+            <li>Cada rodada aparece com o status (Recebido, Preparando...) e pode ser impressa pra cozinha, igual aos pedidos online.</li>
+            <li>No final, toque em <strong>Fechar conta</strong>, escolha a forma de pagamento e confirme — a mesa volta a ficar livre.</li>
+          </ol>
+          <p className="text-muted text-xs">
+            Acesso do garçom: crie um login dele em Configurações → Acesso da equipe. Esse login só
+            abre a tela de Mesas — sem ver Cardápio, Configurações, nem dados de outros clientes.
+          </p>
         </Section>
 
         <Section icon={Share2} title="Divulgando o cardápio">

@@ -37,6 +37,7 @@ export async function updateStoreSettings(data: {
   promo_active: boolean;
   promo_title: string;
   promo_description: string;
+  table_count: number;
 }) {
   const supabase = await createClient();
   const { error } = await supabase.from("store_settings").update(data).eq("id", 1);
@@ -245,6 +246,7 @@ export async function searchCustomerData(
   const { data, error } = await supabase
     .from("orders")
     .select("*, order_items(*)")
+    .is("tab_id", null) // pedidos de mesa/comanda não têm dados pessoais de cliente
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
 

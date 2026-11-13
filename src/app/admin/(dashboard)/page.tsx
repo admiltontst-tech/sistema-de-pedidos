@@ -81,10 +81,20 @@ export default async function AdminOrdersPage() {
               </div>
               <div className="flex-1 min-w-[140px]">
                 <div className="font-semibold text-foreground text-sm">{order.customer_name}</div>
-                <div className="text-muted text-xs">{order.customer_phone}</div>
+                {order.delivery_type !== "local" && (
+                  <div className="text-muted text-xs">{order.customer_phone}</div>
+                )}
               </div>
-              <div className="text-muted text-xs font-semibold px-2.5 py-1 bg-chip rounded-full">
-                {order.delivery_type === "delivery" ? "Entrega" : "Retirada"}
+              <div
+                className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                  order.delivery_type === "local" ? "bg-accent/15 text-accent-dark" : "text-muted bg-chip"
+                }`}
+              >
+                {order.delivery_type === "delivery"
+                  ? "Entrega"
+                  : order.delivery_type === "pickup"
+                    ? "Retirada"
+                    : "Salão"}
               </div>
               <div className="font-bold text-heading text-sm w-24 text-right">
                 {formatMoney(order.total_cents)}

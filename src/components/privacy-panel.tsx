@@ -4,11 +4,10 @@ import { useState } from "react";
 import { Search, Download, Trash2, Loader2 } from "lucide-react";
 import { searchCustomerData, deleteOrdersPermanently } from "@/app/admin/actions";
 import { formatMoney } from "@/lib/money";
+import { paymentLabel } from "@/lib/order-status";
 import type { Order, OrderItem } from "@/lib/types";
 
 type OrderWithItems = Order & { order_items: OrderItem[] };
-
-const PAYMENT_LABEL: Record<string, string> = { pix: "Pix", dinheiro: "Dinheiro", cartao: "Cartão" };
 
 function downloadJson(filename: string, data: unknown) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -136,7 +135,7 @@ export function PrivacyPanel() {
                         {order.delivery_type === "delivery"
                           ? order.address ?? "Entrega"
                           : "Retirada"}{" "}
-                        · {PAYMENT_LABEL[order.payment_method] ?? order.payment_method} ·{" "}
+                        · {paymentLabel(order.payment_method)} ·{" "}
                         {formatMoney(order.total_cents)}
                       </div>
                       <ul className="text-xs text-foreground/80 mt-1.5 list-disc pl-4">
