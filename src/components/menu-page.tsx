@@ -345,6 +345,11 @@ function CheckoutDrawer({
       setError("Informe o endereço de entrega.");
       return;
     }
+    // Abre a aba em branco já aqui, no clique síncrono do botão — se esperarmos
+    // o pedido salvar (await) pra só então abrir, navegadores (principalmente
+    // em apps com navegador embutido) bloqueiam o window.open por não achar
+    // que foi uma ação direta do usuário.
+    const whatsappWindow = window.open("", "_blank");
     setSubmitting(true);
     try {
       const { id } = await createOrder({
@@ -385,8 +390,14 @@ function CheckoutDrawer({
         lines.join("\n")
       )}`;
 
+      if (whatsappWindow) {
+        whatsappWindow.location.href = whatsappUrl;
+      } else {
+        window.open(whatsappUrl, "_blank");
+      }
       onSubmitted(id, whatsappUrl);
     } catch (e) {
+      whatsappWindow?.close();
       setError(e instanceof Error ? e.message : "Erro ao enviar pedido.");
     } finally {
       setSubmitting(false);
@@ -554,7 +565,6 @@ export function MenuPage({
     setShowCheckout(false);
     setConfirmed({ id, whatsappUrl });
     clear();
-    window.open(whatsappUrl, "_blank");
   }
 
   const count = cartCount(items);
@@ -881,14 +891,23 @@ export function MenuPage({
             <div className="w-16 h-16 rounded-full bg-[#1F9D55]/15 flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 size={30} className="text-[#1F9D55]" />
             </div>
-            <h3 className="font-display text-[19px] text-heading">Pedido enviado!</h3>
+            <h3 className="font-display text-[19px] text-heading">Pedido recebido!</h3>
             <p className="text-muted text-sm mt-2">
-              Recebemos seu pedido e abrimos o WhatsApp pra você confirmar com a gente. Obrigado pela
-              preferência!
+              Agora confirme com a gente pelo WhatsApp — se não abriu automaticamente, toque no
+              botão abaixo.
             </p>
             <a
+              href={confirmed.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 mt-4 bg-[#1F9D55] text-white font-bold py-3 rounded-lg"
+            >
+              <MessageCircle size={17} />
+              Abrir WhatsApp
+            </a>
+            <a
               href={`/pedido/${confirmed.id}`}
-              className="block mt-4 text-accent-dark font-semibold text-sm underline"
+              className="block mt-3 text-accent-dark font-semibold text-sm underline"
             >
               Acompanhar status do pedido
             </a>
