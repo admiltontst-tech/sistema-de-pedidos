@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Order } from "@/lib/types";
 import { OrderStatusSelect } from "@/components/order-status-select";
 import { OrdersRealtimeNotifier } from "@/components/orders-realtime-notifier";
+import { OrdersCharts } from "@/components/orders-charts";
 import { formatMoney } from "@/lib/money";
 import { OPEN_STATUSES } from "@/lib/order-status";
 
@@ -61,6 +62,8 @@ export default async function AdminOrdersPage() {
         <StatCard icon={Wallet} label="Faturamento hoje" value={formatMoney(todayRevenue)} />
         <StatCard icon={Flame} label="Em aberto" value={String(openOrders.length)} />
       </div>
+
+      {list.length > 0 && <OrdersCharts orders={list} />}
 
       {list.length === 0 ? (
         <div className="bg-surface border border-border rounded-2xl py-16 flex flex-col items-center gap-3">

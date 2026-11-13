@@ -10,6 +10,7 @@ import {
   SlidersHorizontal,
   LayoutGrid,
   Smartphone,
+  BarChart3,
 } from "lucide-react";
 
 function Section({
@@ -60,6 +61,19 @@ export default function AdminHelpPage() {
             </li>
           </ol>
           <p>A atualização é só clicar no status e escolher o novo — salva na hora, sem precisar confirmar nada.</p>
+        </Section>
+
+        <Section icon={BarChart3} title="Gráficos de faturamento e pedidos">
+          <p>
+            Logo abaixo dos três números rápidos, na aba <strong>Pedidos</strong>, aparecem dois
+            gráficos de barras com os últimos 7 dias: um de faturamento e outro de quantidade de
+            pedidos.
+          </p>
+          <ul>
+            <li>O dia de hoje aparece destacado numa cor mais escura, pra identificar rápido.</li>
+            <li>Toque (ou passe o mouse) em qualquer barra pra ver o valor exato daquele dia.</li>
+            <li>Os gráficos só aparecem quando já existe pelo menos um pedido no sistema.</li>
+          </ul>
         </Section>
 
         <Section icon={Volume2} title="Aviso de pedido novo">
