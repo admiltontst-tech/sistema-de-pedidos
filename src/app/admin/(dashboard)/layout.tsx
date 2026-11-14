@@ -5,12 +5,18 @@ import { getStoreSettings } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
-  const settings = await getStoreSettings();
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const role = (user?.user_metadata as { role?: string } | undefined)?.role === "garcom" ? "garcom" : "admin";
+  // getSession() lê a sessão já validada pelo middleware (sem nova chamada de
+  // rede pro Supabase Auth) — aqui o papel do usuário só decide o que aparece
+  // no cabeçalho, a checagem de segurança de verdade já aconteceu no middleware.
+  const [settings, { data: { session } }] = await Promise.all([
+    getStoreSettings(),
+    supabase.auth.getSession(),
+  ]);
+  const role =
+    (session?.user.user_metadata as { role?: string } | undefined)?.role === "garcom"
+      ? "garcom"
+      : "admin";
 
   return (
     <div className="min-h-screen bg-background">
