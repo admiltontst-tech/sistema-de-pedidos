@@ -35,19 +35,26 @@ function BarChart({
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(...data.map((d) => d.value), 1);
   const maxIndex = data.reduce((best, d, i) => (d.value > data[best].value ? i : best), 0);
+  const lastIndex = data.length - 1;
 
   return (
-    <div className="bg-surface border border-border rounded-2xl p-4">
+    <div className="bg-surface border border-border rounded-2xl p-4 overflow-hidden">
       <h3 className="font-display font-bold text-heading text-sm mb-4">{title}</h3>
       <div className="flex items-end gap-1.5 sm:gap-2 h-[140px] relative border-b border-border-soft">
         {data.map((d, i) => {
           const heightPct = Math.max((d.value / max) * 100, 2);
           const showLabel = hover === i || i === maxIndex || d.isToday;
+          const labelAlign =
+            i === 0
+              ? "left-0"
+              : i === lastIndex
+                ? "left-auto right-0"
+                : "left-1/2 -translate-x-1/2";
           return (
             <button
               key={i}
               type="button"
-              className="flex-1 flex flex-col items-center justify-end h-full relative outline-none"
+              className="flex-1 min-w-0 flex flex-col items-center justify-end h-full relative outline-none"
               onMouseEnter={() => setHover(i)}
               onMouseLeave={() => setHover(null)}
               onFocus={() => setHover(i)}
@@ -56,9 +63,10 @@ function BarChart({
               aria-label={`${d.label}: ${formatValue(d.value)}`}
             >
               <span
-                className={`text-[10px] font-bold mb-1.5 whitespace-nowrap transition-opacity ${
+                className={`absolute ${labelAlign} text-[10px] font-bold whitespace-nowrap transition-opacity ${
                   showLabel ? "opacity-100" : "opacity-0"
                 } ${d.isToday ? "text-accent-dark" : "text-muted"}`}
+                style={{ bottom: `calc(${heightPct}% + 6px)` }}
               >
                 {formatValue(d.value)}
               </span>
