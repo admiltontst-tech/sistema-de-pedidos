@@ -12,7 +12,6 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
     whatsapp_phone: settings.whatsapp_phone,
     address: settings.address ?? "",
     opening_hours: settings.opening_hours ?? "",
-    is_open: settings.is_open,
     delivery_fee: (settings.delivery_fee_cents / 100).toFixed(2),
     min_order: (settings.min_order_cents / 100).toFixed(2),
     delivery_time_estimate: settings.delivery_time_estimate ?? "",
@@ -36,7 +35,6 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
       whatsapp_phone: form.whatsapp_phone,
       address: form.address,
       opening_hours: form.opening_hours,
-      is_open: form.is_open,
       delivery_fee_cents: Math.round(parseFloat(form.delivery_fee || "0") * 100),
       min_order_cents: Math.round(parseFloat(form.min_order || "0") * 100),
       delivery_time_estimate: form.delivery_time_estimate,
@@ -56,17 +54,6 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
       onSubmit={handleSubmit}
       className="bg-surface border border-border rounded-2xl p-6 max-w-lg flex flex-col gap-4"
     >
-      <button
-        type="button"
-        onClick={() => setForm((f) => ({ ...f, is_open: !f.is_open }))}
-        className={`flex items-center justify-between px-4 py-3 rounded-lg border-[1.5px] font-semibold text-sm ${
-          form.is_open ? "border-[#1F9D55] bg-[#1F9D55]/10 text-[#15803D]" : "border-[#D62828] bg-[#D62828]/10 text-[#B91C1C]"
-        }`}
-      >
-        <span>Loja {form.is_open ? "aberta" : "fechada"} para pedidos</span>
-        <span className="text-xs underline">Clique para alternar</span>
-      </button>
-
       <div className="border-[1.5px] border-accent/40 bg-accent/5 rounded-xl p-4 flex flex-col gap-3">
         <button
           type="button"

@@ -1,5 +1,6 @@
 import { getStoreSettings } from "@/lib/queries";
 import { SettingsForm } from "@/components/settings-form";
+import { StoreOpenToggle } from "@/components/store-open-toggle";
 import { StaffAccessPanel } from "@/components/staff-access-panel";
 import { PushNotificationsCard } from "@/components/push-notifications-card";
 import { listStaffAccounts } from "@/app/admin/staff-actions";
@@ -22,7 +23,10 @@ export default async function AdminSettingsPage() {
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="font-display text-xl text-heading mb-5">Configurações da loja</h1>
-        <SettingsForm settings={settings} />
+        <StoreOpenToggle initialIsOpen={settings.is_open} />
+        <div className="mt-4">
+          <SettingsForm settings={settings} />
+        </div>
       </div>
       <PushNotificationsCard />
       <StaffAccessPanel initialAccounts={staffAccounts} currentUserId={session?.user.id ?? ""} />

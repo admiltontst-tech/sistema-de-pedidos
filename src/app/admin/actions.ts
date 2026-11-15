@@ -28,7 +28,6 @@ export async function updateStoreSettings(data: {
   whatsapp_phone: string;
   address: string;
   opening_hours: string;
-  is_open: boolean;
   delivery_fee_cents: number;
   min_order_cents: number;
   delivery_time_estimate: string;
@@ -41,6 +40,14 @@ export async function updateStoreSettings(data: {
 }) {
   const supabase = await createClient();
   const { error } = await supabase.from("store_settings").update(data).eq("id", 1);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/configuracoes");
+  revalidatePath("/");
+}
+
+export async function toggleStoreOpen(isOpen: boolean) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("store_settings").update({ is_open: isOpen }).eq("id", 1);
   if (error) throw new Error(error.message);
   revalidatePath("/admin/configuracoes");
   revalidatePath("/");

@@ -605,14 +605,16 @@ export function MenuPage({
               </span>
             </div>
             <div
-              className={`sm:hidden w-7 h-7 rounded-full flex items-center justify-center ${
+              className={`sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-full ${
                 settings.is_open ? "bg-[#1F9D55]/15" : "bg-[#D62828]/15"
               }`}
-              aria-label={settings.is_open ? "Aberto agora" : "Fechado"}
             >
               <span
-                className={`w-[7px] h-[7px] rounded-full ${settings.is_open ? "bg-[#2FBE6F]" : "bg-[#FF5A5A]"}`}
+                className={`w-[7px] h-[7px] rounded-full flex-shrink-0 ${settings.is_open ? "bg-[#2FBE6F]" : "bg-[#FF5A5A]"}`}
               />
+              <span className={`text-[11px] font-bold whitespace-nowrap ${settings.is_open ? "text-[#15803D]" : "text-[#B91C1C]"}`}>
+                {settings.is_open ? "Aberto" : "Fechado"}
+              </span>
             </div>
             <button
               aria-label="Ver carrinho"
