@@ -1,9 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { Flame } from "lucide-react";
+import { useRef, useState } from "react";
+import { Flame, ImagePlus, Loader2, Pencil, X } from "lucide-react";
 import { updateStoreSettings } from "@/app/admin/actions";
+import { createClient } from "@/lib/supabase/client";
 import type { StoreSettings } from "@/lib/types";
+
+async function uploadPromoImage(file: File): Promise<string> {
+  const supabase = createClient();
+  const ext = file.name.split(".").pop();
+  const path = `promo/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await supabase.storage.from("product-images").upload(path, file);
+  if (error) throw new Error(`Falha ao enviar imagem: ${error.message}`);
+  const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+  return data.publicUrl;
+}
 
 export function SettingsForm({ settings }: { settings: StoreSettings }) {
   const [form, setForm] = useState({
@@ -20,10 +31,26 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
     promo_active: settings.promo_active,
     promo_title: settings.promo_title ?? "",
     promo_description: settings.promo_description ?? "",
+    promo_image_url: settings.promo_image_url,
     table_count: String(settings.table_count),
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [uploadingPromoImage, setUploadingPromoImage] = useState(false);
+  const promoFileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handlePromoImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setForm((f) => ({ ...f, promo_image_url: URL.createObjectURL(file) }));
+    setUploadingPromoImage(true);
+    try {
+      const url = await uploadPromoImage(file);
+      setForm((f) => ({ ...f, promo_image_url: url }));
+    } finally {
+      setUploadingPromoImage(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,6 +70,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
       promo_active: form.promo_active,
       promo_title: form.promo_title,
       promo_description: form.promo_description,
+      promo_image_url: form.promo_image_url,
       table_count: Math.max(1, Math.round(parseFloat(form.table_count || "0") || 0)),
     });
     setSaving(false);
@@ -88,6 +116,70 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
             className="w-full mt-1.5 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-foreground resize-none"
           />
         </label>
+
+        <div>
+          <span className="text-[12.5px] font-bold text-muted uppercase block mb-1.5">
+            Foto do banner (opcional)
+          </span>
+          <input
+            type="file"
+            accept="image/*"
+            ref={promoFileInputRef}
+            onChange={handlePromoImageChange}
+            className="hidden"
+          />
+          {form.promo_image_url ? (
+            <div className="relative w-full rounded-lg overflow-hidden bg-chip group flex justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={form.promo_image_url}
+                alt="Banner da promoção"
+                className="max-h-[420px] w-auto h-auto"
+              />
+              <button
+                type="button"
+                onClick={() => promoFileInputRef.current?.click()}
+                className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                aria-label="Trocar foto do banner"
+              >
+                {uploadingPromoImage ? (
+                  <Loader2 size={18} className="text-white animate-spin" />
+                ) : (
+                  <Pencil size={16} className="text-white" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, promo_image_url: null }))}
+                className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80 transition"
+                aria-label="Remover foto do banner"
+              >
+                <X size={13} />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => promoFileInputRef.current?.click()}
+              className="w-full h-32 rounded-lg border-2 border-dashed border-accent/40 bg-surface flex flex-col items-center justify-center gap-1.5 text-muted hover:border-accent/70 transition"
+            >
+              {uploadingPromoImage ? (
+                <Loader2 size={18} className="animate-spin text-accent-dark" />
+              ) : (
+                <>
+                  <ImagePlus size={18} className="text-accent-dark" />
+                  <span className="text-xs font-semibold">Adicionar foto do banner</span>
+                </>
+              )}
+            </button>
+          )}
+          <p className="text-muted text-[11px] mt-1.5">
+            Pode ser uma arte vertical completa (tipo as que vocês já fazem pra Instagram/WhatsApp)
+            — ela aparece inteira no site, sem cortar. Se adicionar uma foto, ela substitui a barra
+            de texto. Sem foto, continua aparecendo só o texto acima.
+          </p>
+        </div>
+
         <p className="text-muted text-xs">
           Quando ativa, aparece em destaque no topo do site. Desative quando a promoção acabar.
         </p>

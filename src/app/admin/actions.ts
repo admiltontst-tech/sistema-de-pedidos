@@ -36,6 +36,7 @@ export async function updateStoreSettings(data: {
   promo_active: boolean;
   promo_title: string;
   promo_description: string;
+  promo_image_url: string | null;
   table_count: number;
 }) {
   const supabase = await createClient();

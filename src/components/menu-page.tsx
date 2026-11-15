@@ -632,21 +632,6 @@ export function MenuPage({
         </div>
       </div>
 
-      {/* PROMOÇÃO */}
-      {settings.promo_active && settings.promo_title && (
-        <div className="bg-gradient-to-r from-accent to-[#D62828] px-5 py-3">
-          <div className="max-w-[1180px] mx-auto flex items-center gap-2.5 flex-wrap">
-            <Flame size={19} className="text-white flex-shrink-0" />
-            <span className="font-display font-bold text-white text-[15px]">
-              {settings.promo_title}
-            </span>
-            {settings.promo_description && (
-              <span className="text-white/90 text-sm">{settings.promo_description}</span>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* HERO */}
       <div className="border-b border-border-soft">
         {settings.cover_url && (
@@ -725,6 +710,14 @@ export function MenuPage({
           <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-10 bg-gradient-to-r from-background to-transparent" />
           <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 z-10 bg-gradient-to-l from-background to-transparent" />
           <div className="px-5 flex gap-2.5 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+            {settings.promo_active && (settings.promo_image_url || settings.promo_title) && (
+              <a
+                href="#promocao"
+                className="bg-accent text-accent-ink font-bold text-sm px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1.5"
+              >
+                <Flame size={14} /> Promoção
+              </a>
+            )}
             {featured.length > 0 && (
               <a href="#destaques" className="bg-[#FDE6D3] text-[#5A3E28] font-semibold text-sm px-4 py-2 rounded-full whitespace-nowrap">
                 Destaques
@@ -749,6 +742,35 @@ export function MenuPage({
       </div>
 
       <div className="max-w-[1180px] mx-auto px-5">
+        {settings.promo_active && (settings.promo_image_url || settings.promo_title) && (
+          <section id="promocao" className="pt-7">
+            {settings.promo_image_url ? (
+              <div className="w-full bg-chip flex justify-center rounded-2xl overflow-hidden border border-border">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={settings.promo_image_url}
+                  alt={settings.promo_title ?? "Promoção"}
+                  className="w-full max-w-[480px] h-auto"
+                />
+              </div>
+            ) : (
+              settings.promo_title && (
+                <div className="bg-gradient-to-r from-accent to-[#D62828] rounded-2xl px-5 py-4">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <Flame size={19} className="text-white flex-shrink-0" />
+                    <span className="font-display font-bold text-white text-[15px]">
+                      {settings.promo_title}
+                    </span>
+                    {settings.promo_description && (
+                      <span className="text-white/90 text-sm">{settings.promo_description}</span>
+                    )}
+                  </div>
+                </div>
+              )
+            )}
+          </section>
+        )}
+
         {featured.length > 0 && (
           <section id="destaques" className="pt-7">
             <h3 className="font-display text-xl text-heading mb-3.5">Destaques da casa</h3>

@@ -60,6 +60,7 @@ export type StoreSettings = {
   promo_active: boolean;
   promo_title: string | null;
   promo_description: string | null;
+  promo_image_url: string | null;
   table_count: number;
 };
 

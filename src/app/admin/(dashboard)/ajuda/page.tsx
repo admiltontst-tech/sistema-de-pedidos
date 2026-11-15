@@ -128,8 +128,15 @@ export default function AdminHelpPage() {
 
         <Section icon={Settings} title="Configurações da loja">
           <ul>
-            <li><strong>Loja aberta/fechada:</strong> o botão no topo alterna o status que aparece pros clientes no site. Lembre de marcar como fechada fora do horário de funcionamento.</li>
-            <li><strong>Promoção:</strong> ative e escreva um título e as regras (ex: &quot;Quarta do Baião&quot;) pra aparecer em destaque no topo do site. Desative quando a promoção acabar — o texto fica salvo pra próxima vez.</li>
+            <li><strong>Loja aberta/fechada:</strong> o botão salva na hora, assim que você toca nele — não precisa clicar em Salvar alterações depois.</li>
+            <li>
+              <strong>Promoção:</strong> ative e escreva um título e as regras (ex: &quot;Quarta do
+              Baião&quot;), ou adicione direto a <strong>foto do banner</strong> (pode ser uma arte
+              vertical completa, dessas que já fazem pro Instagram/WhatsApp — ela aparece inteira,
+              sem cortar). Quando ativa, surge uma aba &quot;🔥 Promoção&quot; em destaque no topo
+              do site, que leva pra essa foto (ou pro texto, se não tiver foto). Desative quando a
+              promoção acabar — a aba some sozinha, e o texto/foto ficam salvos pra próxima vez.
+            </li>
             <li><strong>Nome, frase, endereço, horário:</strong> aparecem no cabeçalho e no rodapé do site público.</li>
             <li><strong>WhatsApp:</strong> número que recebe os pedidos (só números, com DDI 55 e DDD, ex: 5585999999999).</li>
             <li><strong>Instagram:</strong> coloque só o usuário (sem @) pra aparecer um atalho clicável no site.</li>
