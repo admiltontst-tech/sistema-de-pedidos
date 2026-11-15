@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   Smartphone,
   BarChart3,
+  Bell,
 } from "lucide-react";
 
 function Section({
@@ -179,6 +180,30 @@ export default function AdminHelpPage() {
           <p className="text-muted text-xs">
             Vale tanto pro login do garçom quanto pro do diretor — cada um instala no próprio
             celular.
+          </p>
+        </Section>
+
+        <Section icon={Bell} title="Notificações no celular (mesmo com a tela bloqueada)">
+          <p>
+            O aviso sonoro dentro do painel (seção acima) só toca com a aba aberta e o celular
+            desbloqueado. Pra receber o aviso mesmo com a tela bloqueada ou o app em segundo plano,
+            ative a notificação do aparelho:
+          </p>
+          <ol>
+            <li>
+              No iPhone, primeiro instale o painel na tela inicial (veja a seção &quot;Instalar o
+              painel como app no celular&quot;, acima) — a notificação só funciona pelo app instalado,
+              não dentro do Safari comum.
+            </li>
+            <li>
+              Vá em <strong>Configurações → Notificações no celular</strong> e toque em{" "}
+              <strong>Ativar notificações neste aparelho</strong>. O navegador vai pedir permissão —
+              toque em Permitir.
+            </li>
+            <li>Pronto — a partir daí, todo pedido novo manda um aviso na tela do celular, com som.</li>
+          </ol>
+          <p className="text-muted text-xs">
+            É por aparelho: cada pessoa (dono, garçom etc.) ativa no próprio celular, uma vez só.
           </p>
         </Section>
 

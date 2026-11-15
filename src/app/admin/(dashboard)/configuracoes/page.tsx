@@ -1,6 +1,7 @@
 import { getStoreSettings } from "@/lib/queries";
 import { SettingsForm } from "@/components/settings-form";
 import { StaffAccessPanel } from "@/components/staff-access-panel";
+import { PushNotificationsCard } from "@/components/push-notifications-card";
 import { listStaffAccounts } from "@/app/admin/staff-actions";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,6 +24,7 @@ export default async function AdminSettingsPage() {
         <h1 className="font-display text-xl text-heading mb-5">Configurações da loja</h1>
         <SettingsForm settings={settings} />
       </div>
+      <PushNotificationsCard />
       <StaffAccessPanel initialAccounts={staffAccounts} currentUserId={session?.user.id ?? ""} />
     </div>
   );
