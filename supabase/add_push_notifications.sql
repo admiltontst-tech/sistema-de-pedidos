@@ -1,11 +1,8 @@
 -- Notificações push (funcionam mesmo com o celular bloqueado/em segundo
 -- plano, diferente do som tocado dentro da página).
 --
--- ANTES DE RODAR: troque os dois valores abaixo pelos mesmos que você
--- configurou nas variáveis de ambiente da Vercel (PUSH_WEBHOOK_SECRET e a
--- URL real do painel em produção).
---   webhook_url    -> https://SEU-DOMINIO.vercel.app/api/push/notify-order
---   webhook_secret -> o mesmo valor de PUSH_WEBHOOK_SECRET
+-- ANTES DE RODAR: troque COLE_AQUI_O_PUSH_WEBHOOK_SECRET abaixo pelo mesmo
+-- valor que você colocou na variável PUSH_WEBHOOK_SECRET na Vercel.
 
 create table if not exists push_subscriptions (
   id uuid primary key default gen_random_uuid(),
@@ -33,7 +30,7 @@ set search_path = public
 as $$
 begin
   perform net.http_post(
-    url := 'https://SEU-DOMINIO.vercel.app/api/push/notify-order',
+    url := 'https://espetinho-do-beh.vercel.app/api/push/notify-order',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       'x-webhook-secret', 'COLE_AQUI_O_PUSH_WEBHOOK_SECRET'
