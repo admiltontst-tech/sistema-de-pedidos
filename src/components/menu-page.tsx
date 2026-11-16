@@ -84,7 +84,7 @@ function FeaturedCard({ product, onAdd }: { product: Product; onAdd: (p: Product
           {product.badge}
         </span>
       )}
-      <div className="h-[120px] relative bg-chip">
+      <div className="aspect-square relative bg-chip">
         {product.image_url ? (
           <Image src={product.image_url} alt={product.name} fill className="object-cover" />
         ) : null}
